@@ -222,8 +222,8 @@ class Gallery {
 					<h1>{$img['title']}</h1>
 				</div>
 				<div class=\"col-right\">
-					<div class=\"share-buttons\">
-						...
+					<div class=\"sen-gal-share-buttons\">
+						
 					</div>
 					<a href=\"#fullscreen\" class=\"sen-gal-fullscreen-btn\">Pełny ekran</a>
 				</div>
@@ -265,11 +265,13 @@ class Gallery {
 			return '';
 		}
 		$output = '<div class="sen-gallery-thumbnails">';
+		$output .= '<div class="sen-gallery-thumbnails-strip">';
 		foreach ($this->images as $image) {
 			$output .= "<a href=\"{$this->getImageUrl($image, 'gallery')}\">";
 			$output .= $this->renderImageDiv($image, 'thumbnail');
 			$output .= "</a>";
 		}
+		$output .= '</div>';
 		$output .= '</div>';
 		return $output;
 	}

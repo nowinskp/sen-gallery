@@ -6,9 +6,11 @@
 	}
 	header.sen-gallery-header {
 		background: #111;
+		border-bottom: rem-calc(1) solid #333;
 		color: #fff;
 		h1 {
 			font-family: $header-font-family;
+			color: #fff;
 		}
 		.counter {
 			color: #999;
@@ -32,5 +34,21 @@
 				border-color: #fff;
 			}
 		}
+	}
+
+	.sen-gal-share-buttons {
+		display: inline-block;
+		margin: rem-calc(9);
+	}
+
+	.sen-gal-fullscreen-btn {
+		display: inline-block;
+		width: rem-calc(24);
+		height: rem-calc(24);
+		background-image: url('../img/icon-fullscreen.png');
+		background-repeat: no-repeat;
+		background-position: center center;
+		text-indent: rem-calc(-99999);
+		margin: rem-calc(9);
 	}
 }
