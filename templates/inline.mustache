@@ -3,9 +3,11 @@
 	class="sen-gallery {{ gallery.js }}"
 	data-gallery-id="{{ gallery.id }}"
 	data-gallery-options="{{{ gallery.options }}}">
+	{{{ custom.beforeGalleryContent }}}
 	{{> partials/images-json-div }}
 	{{> partials/header }}
 	{{> partials/current-image-frame }}
 	{{> partials/description }}
 	{{> partials/thumbnail-strip }}
+	{{{ custom.afterGalleryContent }}}
 </div>

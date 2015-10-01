@@ -30,6 +30,8 @@
 		btnMoveStripRight:       '.SGE_btnMoveStripRight',
 		btnNextImage:            '.SGE_btnNextImage',
 		btnPrevImage:            '.SGE_btnPrevImage',
+		btnFullscreenMode:       '.SGE_btnFullscreenMode',
+		btnCloseFullscreen:      '.SGE_btnCloseFullscreen',
 		currentImage:            '.SGE_currentImage',
 		currentImageDescription: '.SGE_currentImageDescription',
 		currentImageFrame:       '.SGE_currentImageFrame',
@@ -70,6 +72,7 @@
 			this.currentImageIndex = this.options.firstImageIndex;
 		}
 		this.registerCallbacks();
+		this.registerCustomContent();
 	}
 
 
@@ -143,6 +146,31 @@
 			this.callbacks[callbackName] = null;
 		}
 	}
+
+
+/***************************************
+	* Custom content injection methods
+	* --------------------------------- */
+
+	sen.gallery.prototype.registerCustomContent = function() {
+			this.customContent = {
+			inline: {
+				headerMenu: '',
+				beforeGalleryContent: '',
+				afterGalleryContent: '',
+			},
+		}
+	}
+
+	sen.gallery.prototype.setCustomContent = function(templateName, elementName, HTML) {
+		this.customContent[templateName][elementName] = HTML;
+	}
+
+	sen.gallery.prototype.getCustomContent = function(templateName) {
+		var content = this.customContent[templateName];
+		return ( typeof(content) !== 'undefined' ) ? content : {};
+	}
+
 
 /***************************************
 	* Events & interactions loading
@@ -438,6 +466,7 @@
 							'current-image-number': this.getCurrentImageNumber(),
 							'show-thumbs': this.options.showThumbs
 						},
+						custom: this.getCustomContent(templateName),
 						'current-image': currentImageArray,
 						images: this.images
 					},
