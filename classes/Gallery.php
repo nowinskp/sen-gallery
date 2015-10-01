@@ -4,9 +4,26 @@ namespace sen\galleries;
 
 class Gallery {
 
+	// gallery instance index, used when displaying fullscreen mode
 	public static $instance = 0;
 
+	// an array of images, in format of an associative array w/ keys:
+	// $images[#]['id']
+	// $images[#]['title']
+	// $images[#]['description']
+	// $images[#]['src']
+	// $images[#]['image']['thumbnail']
+	// $images[#]['image']['large']
+	// $images[#]['image']['full']
+	// $images[#]['link']
 	protected $images;
+
+	// an array of gallery setup options.
+	// supported options w/ their defaults:
+	// [
+	// 	'showThumbs' => true  -- display images thumbnail list
+	// 	'thumbColumns' => 5  -- how many thumbs to display when js is disabled
+	// ]
 	protected $options;
 
 	protected $id;
@@ -27,12 +44,74 @@ class Gallery {
 		$this->currentImage = ( $currentImage ) ? intval($currentImage) : 0;
 	}
 
-	public function renderHTML() {
-		$output = '
-			<div id="gallery-'.$this->id.'" class="sen-gallery">
-				Galeria nr '.$this->id.'
+
+	/**
+	 * GET CURRENT IMAGE
+	 * @return array - currently displayed image array
+	 */
+	public function getCurrentImage() {
+		if (isset($this->images[$this->currentImage])) {
+			return $this->images[$this->currentImage];
+		} else {
+			return $this->images[0];
+		}
+	}
+
+
+	/**
+	 * RENDER IMAGE
+	 * @param  array/int $image - either image array or image index
+	 * @param  string $format - image size to use
+	 * @return string - html output
+	 */
+	public function renderImage($image, $format = 'thumbnail') {
+		if (is_int($image)) {
+			if (!isset($this->images[$imageIndex])) {
+				return '';
+			} else {
+				$img = $this->images[$imageIndex];
+			}
+		} else if (is_array($image)) {
+			$img = $image;
+		} else {
+			return '';
+		}
+		if ($format != 'thumbnail') {
+			$format = 'full';
+		}
+		$output = "
+			<div class=\"sen-gal-image-container\" href=\"{$img['link']}\">
+				<img class=\"sen-gal-image\" src=\"{$img['image'][$format]}\" alt=\"{$img['title']}\" data-description=\"{$img['description']}\">
 			</div>
-		';
+		";
+		if ($img['link']) {
+			$output = "<a class=\"sen-gal-image-link\" href=\"{$img['link']}\">{$output}</a>";
+		}
+		return $output;
+	}
+
+	/**
+	 * RENDER THUMBNAIL STRIP
+	 * @return string - html output
+	 */
+	public function renderThumbnailsStrip() {
+		if (!$this->options['showThumbs']) {
+			return '';
+		}
+		$output = '<div class="gallery-thumbnails">';
+		foreach ($this->images as $image) {
+			$output .= $this->renderImage($image, 'thumbnail');
+		}
+		$output .= '</div>';
+		return $output;
+	}
+
+	public function renderGallery() {
+		$output = '
+			<div id="gallery-'.$this->id.'" class="sen-gallery no-js" data-gallery-options="'.htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8').'">';
+		$output .= '<div class="sen-gallery-display-image">'.$this->renderImage($this->getCurrentImage(), 'full').'</div>';
+		$output .= $this->renderThumbnailsStrip();
+		$output .= '</div>';
 		return $output;
 	}
 }
