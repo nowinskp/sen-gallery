@@ -7,10 +7,12 @@
 		helpers.extend( this.options, options );
 		this.id = id;
 		this.images = [];
+		this.currentImageTemplate = {};
 		this._init();
 	}
 
 	sen.gallery.prototype.options = {
+		debugMode: true,
 		showThumbs: true,
 		adFrame: false,
 		pluginPath: '/',
@@ -19,7 +21,17 @@
 	}
 
 	sen.gallery.prototype._init = function() {
-		console.log('sen-gal: init');
+		this.log('init');
+		Q
+			.fcall(function(){ return this.cacheCurrentImageTemplate(); }.bind(this))
+			.then(function(result){
+				if (result === true) { this.log('current-image template cached');	}
+				else { this.log('failed to cache current-image template'); }
+			}.bind(this));
+	}
+
+	sen.gallery.prototype.log = function(message) {
+		if (this.options.debugMode) console.log('sen-gal#'+this.id+': ' + message);
 	}
 
 	sen.gallery.prototype.getTemplatePath = function() {
@@ -40,59 +52,108 @@
 	 	onImageLoad: null,
 	 	onFullscreenLoad: null,
 	 	onImportedDiv: null,
+	 	onRenderedGallery: null,
+		// onRenderedTemplate-[templateName]: null - dynamic
 	 }
 
 	sen.gallery.prototype.setCallback = function(callbackName, callbackFunction) {
-		if (
-			typeof(this.callbacks[callbackName]) !== undefined &&
-			typeof(callbackFunction) == 'function'
-		) {
+		if (typeof(callbackFunction) === 'function') {
 			this.callbacks[callbackName] = callbackFunction;
+			this.log('callback ' + callbackName + ' set');
 		}
 	}
 
 	sen.gallery.prototype.fireCallback = function(callbackName) {
+		this.log('firing callback: ' + callbackName);
 		if (typeof(this.callbacks[callbackName]) === 'function') {
 			this.callbacks[callbackName]();
 		}
 	}
 
 	sen.gallery.prototype.removeCallback = function(callbackName) {
-		if (typeof(this.callbacks[callbackName]) !== undefined) {
-			this.callbacks[callbackName] = false;
+		if (typeof(this.callbacks[callbackName]) !== 'undefined') {
+			this.callbacks[callbackName] = null;
 		}
+	}
+
+	sen.gallery.prototype.cacheCurrentImageTemplate = function() {
+		return helpers
+			.getPartialsMap(this.getTemplatePath(), 'partials/current-image', '.mustache')
+			.then(function(parsedObj){
+				if (typeof(parsedObj.template) === 'string'){
+					this.currentImageTemplate = parsedObj;
+					return true;
+				} else {
+					return false;
+				}
+			}.bind(this));
 	}
 
 	sen.gallery.prototype.loadImages = function(imagesArray) {
 		if (imagesArray.length > 0) {
 			this.images = imagesArray;
+			this.fireCallback('onImagesLoaded');
 		}
 	}
 
-	sen.gallery.prototype.importGalleryDiv = function(galleryDivId) {
-		var galleryDiv = $('#'+galleryDivId);
-		var galleryImagesJSONDiv = galleryDiv.find('div.sen-gallery-image-json-data');
-		if (
-			galleryDiv.length > 0 &&
-			galleryImagesJSONDiv.length > 0
-		) {
-			var jsonData = galleryImagesJSONDiv.data('json');
-			this.loadImages(jsonData);
-			var galleryOptionsJSON = galleryDiv.data('gallery-options');
-			this.options = helpers.extend( this.options, galleryOptionsJSON );
-			this.fireCallback('onProcessedDiv');
+	sen.gallery.prototype.getCurrentImage = function() {
+		if ( this.currentImage > 0 && this.hasImage(this.currentImage) ) {
+			return this.images[this.currentImage];
+		}
+		return this.images[0];
+	}
+
+	sen.gallery.prototype.getCurrentImageNumber = function() {
+		return this.getCurrentImage().index + 1;
+	}
+
+	sen.gallery.prototype.hasImage = function(imageIndex) {
+		return (this.images[imageIndex]) ? true : false ;
+	}
+
+	sen.gallery.prototype.displayImage = function(galleryDiv, imageIndex) {
+		if (!this.hasImage(imageIndex)) { return false; }
+		// var imageFrame = $(this) [...]
+	}
+
+	sen.gallery.prototype.importImageJSONDataFromDiv = function(selector, dataKey) {
+		if (!dataKey) { dataKey = 'json'; }
+		var jsonDiv = $(selector);
+		if ( jsonDiv.length > 0 && jsonDiv.data(dataKey).length > 0 ) {
+			this.loadImages(jsonDiv.data(dataKey));
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	sen.gallery.prototype.renderGallery = function(divId, templateName) {
-		var gallery = $('#'+divId);
-		if (divId.length <= 0) { return false; }
+	sen.gallery.prototype.importGalleryDiv = function(selector) {
+		var galleryDiv = $(selector);
+		if (
+			galleryDiv.length > 0 &&
+			this.importImageJSONDataFromDiv(selector+' .sen-gallery-image-json-data')
+		) {
+			var galleryOptionsJSON = galleryDiv.data('gallery-options');
+			this.options = helpers.extend( this.options, galleryOptionsJSON );
+			this.currentImage = galleryDiv.find('.sen-gallery-current-image .sen-gal-image').data('index');
+			this.log('div imported successfully');
+			this.fireCallback('onImportedDiv');
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-		gallery.html(this.getHTML(templateName))
-
+	sen.gallery.prototype.renderGallery = function(selector, templateName) {
+		var galleryElement = $(selector);
+		if (galleryElement.length <= 0) { return false; }
+		Q
+			.fcall(function(){ return this.getHTML(templateName); }.bind(this))
+			.then(function(renderedGallery){
+				galleryElement.html(renderedGallery);
+				this.fireCallback('onRenderedGallery');
+				this.fireCallback('onRenderedTemplate-'+templateName);
+			}.bind(this));
 	}
 
 	/**
@@ -102,21 +163,26 @@
 	 * @return string - gallery HTML content
 	 */
 	sen.gallery.prototype.getHTML = function(templateName) {
-		var templateUrl = this.getTemplatePath() + templateName + '.mustache';
-		$.get(templateUrl).then(function(template) {
-			var rendered = Mustache.render(
-				template,
-				{
-					gallery: {
-						id: 1
+		return helpers
+			.getPartialsMap(this.getTemplatePath(), templateName, '.mustache')
+			.then(function(parsedObj){
+				var currentImageArray = this.getCurrentImage();
+				currentImageArray['link']['prev'] = '#';
+				currentImageArray['link']['next'] = '#';
+				return Mustache.render(
+					parsedObj.template,
+					{
+						gallery: {
+							id: this.id,
+							'total-image-count': this.images.length,
+							'current-image-number': this.getCurrentImageNumber(),
+						},
+						'current-image': currentImageArray,
+						images: this.images
 					},
-					images: this.images
-				}, {
-					test: '<b>test</b>'
-				}
-			);
-			console.log(rendered);
-		}.bind(this));
+					parsedObj.map
+				);
+			}.bind(this));
 	}
 
 
