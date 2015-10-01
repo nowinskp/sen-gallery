@@ -17,6 +17,14 @@
 		currentImage: 0,
 	}
 
+	sen.gallery.prototype.callbacks = {
+		onNextImage: null,
+		onPrevImage: null,
+		onImageSelect: null,
+		onImageLoad: null,
+		onFullscreenLoad: null,
+	}
+
 	sen.gallery.prototype._init = function() {
 		console.log('sen-gal: init');
 	}
@@ -33,6 +41,26 @@
 		this.images = imagesArray;
 	}
 
+	sen.gallery.prototype.setCallback = function(callbackName, callbackFunction) {
+		if (
+			typeof(this.callbacks[callbackName]) !== undefined &&
+			typeof(callbackFunction) == 'function'
+		) {
+			this.callbacks[callbackName] = callbackFunction;
+		}
+	}
+
+	sen.gallery.prototype.fireCallback = function(callbackName) {
+		if (typeof(this.callbacks[callbackName]) === 'function') {
+			this.callbacks[callbackName]();
+		}
+	}
+
+	sen.gallery.prototype.removeCallback = function(callbackName) {
+		if (typeof(this.callbacks[callbackName]) !== undefined) {
+			this.callbacks[callbackName] = false;
+		}
+	}
 
 	/**
 	 * GET HTML
