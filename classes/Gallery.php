@@ -114,7 +114,7 @@ class Gallery {
 	 */
 	public function getImageUrl($image, $option = 'gallery') {
 		$key = "gal-{$this->id}-img";
-		$galId = '#sen-gallery-'.$this->id;
+		$galId = '#sen-gallery-'.$this->id.'-inline';
 		switch ($option) {
 			case 'direct':
 				return ( isset($image['link']) ) ? $image['link'] : '';
