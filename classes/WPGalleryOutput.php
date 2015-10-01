@@ -86,8 +86,12 @@ foreach ( $attachments as $id => $attachment ) {
 }
 
 if ($images) {
+	$showThumbs = ( $attr['show_thumbs'] == 'hide' ) ? false : true;
 	return [
 		'images'  => $images,
+		'options' => [
+			'showThumbs' => $showThumbs
+		]
 	];
 } else {
 	return '';

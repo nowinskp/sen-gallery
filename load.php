@@ -3,7 +3,7 @@
 # LOAD REQUIRED FILES
 # ------------------------------------------
 $files = [
-	// 'folder/filename',
+	'actions/sen_addCustomGallerySettings',
 ];
 
 foreach ($files as $file) {

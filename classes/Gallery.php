@@ -7,6 +7,7 @@ class Gallery {
 	public static $instance = 0;
 
 	protected $images;
+	protected $options;
 
 	protected $id;
 	protected $imageCount;
@@ -16,6 +17,8 @@ class Gallery {
 	public function __construct($imagesArray, $options = []) {
 		$this->id = self::$instance;
 		self::$instance++;
+
+		$this->options = $options;
 
 		$this->images = $imagesArray;
 		$this->imageCount = count($this->images);
