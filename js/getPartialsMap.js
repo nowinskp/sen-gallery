@@ -21,7 +21,7 @@
 
 		function getPartialFile( path ) {
 			return Q.fcall(function(){
-				if ( downloadedPartialFiles[path] === undefined ) {
+				if ( typeof(downloadedPartialFiles[path]) === 'undefined' ) {
 					return $.get( path ).then(function(partialFile){
 						downloadedPartialFiles[path] = partialFile;
 						return partialFile;
