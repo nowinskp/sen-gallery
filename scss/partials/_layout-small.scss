@@ -4,6 +4,9 @@
 	.sen-gallery {
 		width: 100%;
 		font-size: rem-calc(14);
+		* {
+			outline: none !important;
+		}
 		.sen-gal-header {
 			@include clearfix;
 			.sen-gal-col-left {
