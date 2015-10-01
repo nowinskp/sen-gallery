@@ -36,7 +36,10 @@ module.exports = function(grunt) {
 				livereload: true
 			},
 			js: {
-				files: ['js/**/*.js'],
+				files: [
+					'js/**/*.js',
+					'!js/_sen-gallery.min.js'
+				],
 				tasks: ['uglify'],
 			},
 			sass: {
