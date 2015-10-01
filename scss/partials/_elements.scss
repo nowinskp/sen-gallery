@@ -4,15 +4,15 @@
 		color: #fff;
 		text-decoration: none;
 	}
-	header.sen-gallery-header {
+	.sen-gal-header {
 		background: #111;
 		border-bottom: rem-calc(1) solid #333;
 		color: #fff;
-		h1 {
+		.sen-gal-current-image-title {
 			font-family: $header-font-family;
 			color: #fff;
 		}
-		.counter {
+		.sen-gal-counter {
 			color: #999;
 		}
 	}
@@ -41,7 +41,7 @@
 		margin: rem-calc(9);
 	}
 
-	.sen-gal-fullscreen-btn {
+	.sen-gal-btn-fullscreen {
 		display: inline-block;
 		width: rem-calc(24);
 		height: rem-calc(24);

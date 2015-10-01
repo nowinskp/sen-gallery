@@ -116,7 +116,7 @@
 		// var imageFrame = $(this) [...]
 	}
 
-	sen.gallery.prototype.importImageJSONDataFromDiv = function(selector, dataKey) {
+	sen.gallery.prototype.importImagesJSONDataFromDiv = function(selector, dataKey) {
 		if (!dataKey) { dataKey = 'json'; }
 		var jsonDiv = $(selector);
 		if ( jsonDiv.length > 0 && jsonDiv.data(dataKey).length > 0 ) {
@@ -131,7 +131,7 @@
 		var galleryDiv = $(selector);
 		if (
 			galleryDiv.length > 0 &&
-			this.importImageJSONDataFromDiv(selector+' .sen-gallery-image-json-data')
+			this.importImagesJSONDataFromDiv(selector+' .sen-gal-images-json-data')
 		) {
 			var galleryOptionsJSON = galleryDiv.data('gallery-options');
 			this.options = helpers.extend( this.options, galleryOptionsJSON );

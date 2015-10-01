@@ -4,17 +4,17 @@
 	.sen-gallery {
 		width: 100%;
 		font-size: rem-calc(14);
-		header.sen-gallery-header {
+		.sen-gal-header {
 			@include clearfix;
-			.col-left {
+			.sen-gal-col-left {
 				float: left;
 				padding: rem-calc(10);
 			}
-			.col-right {
+			.sen-gal-col-right {
 				float: right;
 				padding: rem-calc(10);
 			}
-			h1 {
+			.sen-gal-current-image-title {
 				margin: 0;
 				padding: 0;
 				font-size: rem-calc(18);
@@ -24,13 +24,13 @@
 		img {
 			max-width: 100%;
 		}
-		.sen-gallery-current-image {
+		.sen-gal-current-image {
 			background: #000;
 			position: relative;
 			background-image: url('../img/image-preloader.gif');
 			background-repeat: no-repeat;
 			background-position: center center;
-			.sen-gallery-current-image-buttons {
+			.sen-gal-current-image-buttons {
 				width: 100%;
 				height: 100%;
 				position: absolute;
@@ -98,17 +98,17 @@
 				}
 			}
 		}
-		.sen-gallery-current-image-description {
+		.sen-gal-current-image-description {
 			background: #333;
 			color: #ccc;
 			padding: rem-calc(15 10 20 10);
 		}
-		.sen-gallery-thumbnails {
+		.sen-gal-thumbnails {
 			@include clearfix;
 			background: #111;
 			padding: rem-calc(5);
 			overflow: hidden;
-			.sen-gallery-thumbnails-strip {
+			.sen-gal-thumbnails-strip {
 				width: auto;
 				margin: 0 auto;
 				a {
@@ -123,13 +123,13 @@
 
 	// NO JS VERSION
 	// -------------
-	.sen-gallery.no-js {
-		.sen-gal-fullscreen-btn {
+	.sen-gal.no-js {
+		.sen-gal-btn-fullscreen {
 			display: none;
 		}
-		.sen-gallery-thumbnails {
+		.sen-gal-thumbnails {
 			text-align: center;
-			.sen-gallery-thumbnails-strip {
+			.sen-gal-thumbnails-strip {
 				display: inline-block;
 			}
 		}
