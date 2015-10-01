@@ -71,4 +71,10 @@ function sen_loadGalleryScripts(){
 	);
 	wp_enqueue_script( 'sen-gallery' );
 
+	wp_register_script(
+		'sen-gallery-init',
+		$currentDir.'/js/sen-gallery-init.js',
+		['jquery'], false, false
+	);
+	wp_enqueue_script( 'sen-gallery-init' );
 }
