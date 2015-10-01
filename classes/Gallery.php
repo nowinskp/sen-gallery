@@ -237,6 +237,7 @@ class Gallery {
 				'js'                   => 'no-js',
 				'total-image-count'    => $this->imageCount,
 				'current-image-number' => ($this->currentImage + 1),
+				'show-thumbs'          => $this->options['showThumbs'],
 				'options'              => htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8'),
 				'imagejson'            => $includeJSONData ? htmlentities($this->getGalleryImageDataJSON(), ENT_QUOTES, 'UTF-8') : false,
 			],

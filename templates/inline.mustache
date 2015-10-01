@@ -1,6 +1,7 @@
 <div
-	id="sen-gallery-{{ gallery.id }}"
+	id="sen-gallery-{{ gallery.id }}-inline"
 	class="sen-gallery {{ gallery.js }}"
+	data-gallery-id="{{ gallery.id }}"
 	data-gallery-options="{{{ gallery.options }}}">
 	{{> partials/images-json-div }}
 	{{> partials/header }}

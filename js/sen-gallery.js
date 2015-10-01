@@ -7,6 +7,7 @@
 		helpers.extend( this.options, options );
 		this.id = id;
 		this.images = [];
+		this.instances = {};
 		this.currentImageTemplate = {};
 		this._init();
 	}
@@ -18,16 +19,26 @@
 		pluginPath: '/',
 		templatePath: false,
 		currentImage: 0,
+		loopGallery: false,
 	}
 
 	sen.gallery.prototype._init = function() {
 		this.log('init');
+		// cache current-image template file
 		Q
 			.fcall(function(){ return this.cacheCurrentImageTemplate(); }.bind(this))
 			.then(function(result){
 				if (result === true) { this.log('current-image template cached');	}
 				else { this.log('failed to cache current-image template'); }
 			}.bind(this));
+		// check if current image is set in URL scheme
+		var currentImgUrlParamValue = helpers.getURLParameter('gal-'+this.id+'-img');
+		if (
+			parseInt(currentImgUrlParamValue) > 0 &&
+			this.hasImage(currentImgUrlParamValue)
+		) {
+			this.currentImage = currentImgUrlParamValue;
+		}
 	}
 
 	sen.gallery.prototype.log = function(message) {
@@ -76,6 +87,26 @@
 		}
 	}
 
+	sen.gallery.prototype.addGalleryInstance = function(jQueryObject) {
+		if (typeof(this.instances[jQueryObject.selector]) === 'undefined') {
+			this.instances[jQueryObject.selector] = jQueryObject;
+		}
+		this.loadGalleryEvents();
+	}
+
+	sen.gallery.prototype.loadGalleryEvents = function() {
+		for (var instance in this.instances) {
+		   if (this.instances.hasOwnProperty(instance)) {
+				var galleryDiv = this.instances[instance];
+				galleryDiv.on('click', '.thumbnail', function(event, element) {
+					event.preventDefault();
+					var thumbId = event.currentTarget.dataset.index;
+					this.displayImage(thumbId);
+				}.bind(this));
+		   }
+		}
+	}
+
 	sen.gallery.prototype.cacheCurrentImageTemplate = function() {
 		return helpers
 			.getPartialsMap(this.getTemplatePath(), 'partials/current-image', '.mustache')
@@ -111,9 +142,32 @@
 		return (this.images[imageIndex]) ? true : false ;
 	}
 
-	sen.gallery.prototype.displayImage = function(galleryDiv, imageIndex) {
+	sen.gallery.prototype.displayImage = function(imageIndex) {
 		if (!this.hasImage(imageIndex)) { return false; }
-		// var imageFrame = $(this) [...]
+		for (var instance in this.instances) {
+		   if (this.instances.hasOwnProperty(instance)) {
+		   	var galleryDiv = this.instances[instance];
+		   	this.markThumbnailOnStrip(imageIndex, galleryDiv);
+				var currentImage = galleryDiv.find('.sen-gal-current-image');
+				currentImage.fadeOut('250', function() {
+		   		var newImage = $(Mustache.render(
+		   			this.currentImageTemplate.template,
+		   			this.images[imageIndex]
+		   		));
+		   		newImage.css('display', 'none');
+					currentImage.replaceWith(newImage[0]);
+					var newCurrentImage = galleryDiv.find('.sen-gal-current-image');
+					newCurrentImage.fadeIn(300);
+				}.bind(this));
+		   }
+		}
+	}
+
+	sen.gallery.prototype.markThumbnailOnStrip = function(imageIndex, galleryDivObj) {
+		if (!this.hasImage(imageIndex)) { return false; }
+		var strip = galleryDivObj.find('.sen-gal-thumbnails-strip');
+		strip.find('.sen-gal-image').removeClass('active');
+		strip.find('.sen-gal-image[data-index="'+imageIndex+'"]').addClass('active');
 	}
 
 	sen.gallery.prototype.importImagesJSONDataFromDiv = function(selector, dataKey) {
@@ -135,7 +189,7 @@
 		) {
 			var galleryOptionsJSON = galleryDiv.data('gallery-options');
 			this.options = helpers.extend( this.options, galleryOptionsJSON );
-			this.currentImage = galleryDiv.find('.sen-gallery-current-image .sen-gal-image').data('index');
+			this.currentImage = galleryDiv.find('.sen-gal-current-image .sen-gal-image').data('index');
 			this.log('div imported successfully');
 			this.fireCallback('onImportedDiv');
 			return true;
@@ -150,7 +204,9 @@
 		Q
 			.fcall(function(){ return this.getHTML(templateName); }.bind(this))
 			.then(function(renderedGallery){
-				galleryElement.html(renderedGallery);
+				galleryElement.replaceWith(renderedGallery);
+				galleryElement.attr('data-template', templateName);
+				this.addGalleryInstance($('#sen-gallery-'+this.id+'-'+templateName));
 				this.fireCallback('onRenderedGallery');
 				this.fireCallback('onRenderedTemplate-'+templateName);
 			}.bind(this));
@@ -176,6 +232,7 @@
 							id: this.id,
 							'total-image-count': this.images.length,
 							'current-image-number': this.getCurrentImageNumber(),
+							'show-thumbs': this.options.showThumbs
 						},
 						'current-image': currentImageArray,
 						images: this.images
