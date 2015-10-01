@@ -1,23 +1,9 @@
-{{# current-image }}
-<div class="sen-gallery-current-image">
-	<div class="sen-gallery-current-image-buttons">
-		{{# link.prev }}
-			<a	class="sen-gal-btn sen-gal-image-link-prev"
-				href="{{ link.prev }}">Poprzedni</a>
-		{{/ link.prev }}
-		{{# link.direct }}
-			<a	class="sen-gal-btn sen-gal-image-link-direct"
-				href="{{ link.direct }}">Wyświetl obraz</a>
-		{{/ link.direct }}
-		{{# link.next }}
-			<a	class="sen-gal-btn sen-gal-image-link-next"
-				href="{{ link.next }}">Następny</a>
-		{{/ link.next }}
-	</div>
-	<div
-		class="sen-gal-image {{ active }}"
-		style="background-image: url('{{ image.full }}')"
-		data-alt="{{ title }}"
-		data-description="{{ description }}"></div>
-</div>
-{{/ current-image }}
+{{!
+	This is a base partial file that represents a template for gallery's currently displayed image. It's used across all gallery templates. JS version of the gallery uses cached version of this file to quickly change currently displayed image.
+}}
+<div
+	class="sen-gal-image {{ active }}"
+	style="background-image: url('{{ image.full }}')"
+	data-index="{{ index }}"
+	data-alt="{{ title }}"
+	data-description="{{ description }}"></div>

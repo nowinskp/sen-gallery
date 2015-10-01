@@ -1,0 +1,19 @@
+{{# current-image }}
+<div class="sen-gallery-current-image">
+	<div class="sen-gallery-current-image-buttons">
+		{{# link.prev }}
+			<a	class="sen-gal-btn sen-gal-image-link-prev"
+				href="{{ link.prev }}">Poprzedni</a>
+		{{/ link.prev }}
+		{{# link.direct }}
+			<a	class="sen-gal-btn sen-gal-image-link-direct"
+				href="{{ link.direct }}">Wyświetl obraz</a>
+		{{/ link.direct }}
+		{{# link.next }}
+			<a	class="sen-gal-btn sen-gal-image-link-next"
+				href="{{ link.next }}">Następny</a>
+		{{/ link.next }}
+	</div>
+	{{> partials/current-image }}
+</div>
+{{/ current-image }}

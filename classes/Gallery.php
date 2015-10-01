@@ -221,7 +221,7 @@ class Gallery {
 		} else {
 			$activeClass = '';
 		}
-		$output = "<div class=\"sen-gal-image {$format}{$activeClass}\" style=\"background-image: url('{$img['image'][$format]}')\" data-alt=\"{$img['title']}\" data-description=\"{$img['description']}\"></div>";
+		$output = "<div class=\"sen-gal-image {$format}{$activeClass}\" style=\"background-image: url('{$img['image'][$format]}')\" data-alt=\"{$img['title']}\" data-description=\"{$img['description']}\" data-index=\"{$img['index']}\"></div>";
 		return $output;
 	}
 
