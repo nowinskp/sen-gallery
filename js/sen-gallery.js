@@ -26,20 +26,20 @@
 	}
 
 	sen.gallery.prototype.selectors = {
-		btnMoveStripLeft: '.sen-gal-move-strip-left',
-		btnMoveStripRight: '.sen-gal-move-strip-right',
-		btnNextImage: '.sen-gal-image-link-next',
-		btnPrevImage: '.sen-gal-image-link-prev',
-		currentImage: '.sen-gal-current-image',
-		currentImageDescription: '.sen-gal-current-image-description',
-		currentImageFrame: '.sen-gal-current-image-frame',
-		currentImageNumber: '.sen-gal-current-image-number',
-		currentImageTitle: '.sen-gal-current-image-title',
-		jsonDataDiv: '.sen-gal-images-json-data',
-		singleThumbnail: '.thumbnail',
-		thumbnailStrip: '.sen-gal-thumbnails-strip',
-		thumbnailStripContainer: '.sen-gal-thumbnails',
-		totalImageCount: '.sen-gal-total-image-count',
+		btnMoveStripLeft:        '.SGE_btnMoveStripLeft',
+		btnMoveStripRight:       '.SGE_btnMoveStripRight',
+		btnNextImage:            '.SGE_btnNextImage',
+		btnPrevImage:            '.SGE_btnPrevImage',
+		currentImage:            '.SGE_currentImage',
+		currentImageDescription: '.SGE_currentImageDescription',
+		currentImageFrame:       '.SGE_currentImageFrame',
+		currentImageNumber:      '.SGE_currentImageNumber',
+		currentImageTitle:       '.SGE_currentImageTitle',
+		jsonDataDiv:             '.SGE_jsonDataDiv',
+		singleThumbnail:         '.SGE_thumbnail',
+		thumbnailStrip:          '.SGE_thumbnailStrip',
+		thumbnailStripContainer: '.SGE_thumbnailStripContainer',
+		totalImageCount:         '.SGE_totalImageCount',
 	}
 
 
