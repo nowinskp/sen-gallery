@@ -10,6 +10,7 @@
 		this.instances = {};
 		this.currentImageIndex = 0;
 		this.currentImageTemplate = {};
+		this.duringImageExchange = false;
 		this._init();
 	}
 
@@ -71,6 +72,10 @@
 	 	onImportedDiv: null,
 	 	onRenderedGallery: null,
 		// onRenderedTemplate-[templateName]: null - dynamic
+	 	onDisplayImage: null,
+	 	onImageChanged: null,
+	 	onNextImage: null,
+	 	onPreviousImage: null,
 	 }
 
 	sen.gallery.prototype.setCallback = function(callbackName, callbackFunction) {
@@ -80,10 +85,10 @@
 		}
 	}
 
-	sen.gallery.prototype.fireCallback = function(callbackName) {
+	sen.gallery.prototype.fireCallback = function(callbackName, params) {
 		this.log('firing callback: ' + callbackName);
 		if (typeof(this.callbacks[callbackName]) === 'function') {
-			this.callbacks[callbackName]();
+			this.callbacks[callbackName](params);
 		}
 	}
 
@@ -103,14 +108,24 @@
 	sen.gallery.prototype.loadGalleryEvents = function() {
 		for (var instance in this.instances) {
 		   if (this.instances.hasOwnProperty(instance)) {
-				var galleryDiv = this.instances[instance];
-				galleryDiv.on('click', '.sen-gal-thumbnails-strip', function(event) {
+				var $galleryDiv = this.instances[instance];
+				// THUMBNAIL STRIP IMAGE SELECTION
+				$galleryDiv.on('click', '.sen-gal-thumbnails-strip', function(event) {
 					event.preventDefault();
 				});
-				galleryDiv.on('click', '.thumbnail', function(event, element) {
+				$galleryDiv.on('click', '.thumbnail', function(event) {
 					event.preventDefault();
 					var thumbId = event.currentTarget.dataset.index;
 					this.displayImage(thumbId);
+				}.bind(this));
+				// CURRENT IMAGE NAV BUTTONS
+				$galleryDiv.on('click', '.sen-gal-image-link-next', function(event) {
+					event.preventDefault();
+					this.displayAdjacentImage('next');
+				}.bind(this));
+				$galleryDiv.on('click', '.sen-gal-image-link-prev', function(event) {
+					event.preventDefault();
+					this.displayAdjacentImage('prev');
 				}.bind(this));
 		   }
 		}
@@ -163,6 +178,21 @@
 			.text(this.images.length);
 	}
 
+	sen.gallery.prototype.reloadGalleryNavButtons = function($galleryDiv) {
+		var btnNext = $galleryDiv.find('.sen-gal-image-link-next');
+		var btnPrev = $galleryDiv.find('.sen-gal-image-link-prev');
+		if (this.getAdjacentImageIndex('next') === false) {
+			btnNext.hide();
+		} else {
+			btnNext.show();
+		}
+		if (this.getAdjacentImageIndex('prev') === false) {
+			btnPrev.hide();
+		} else {
+			btnPrev.show();
+		}
+	}
+
 	/**
 	 * GET ADJACENT IMAGE INDEX
 	 * returns index of next or previous image, related to currently displayed one
@@ -201,17 +231,46 @@
 		return (this.images[imageIndex]) ? true : false ;
 	}
 
+	sen.gallery.prototype.displayAdjacentImage = function(direction) {
+		if (direction == 'next') {
+			var adjacentImageindex = this.getAdjacentImageIndex('next');
+			if (adjacentImageindex !== false) {
+				this.fireCallback('onNextImage');
+				this.displayImage(adjacentImageindex);
+			}
+		} else if (direction == 'prev') {
+			var adjacentImageindex = this.getAdjacentImageIndex('prev');
+			if (adjacentImageindex !== false) {
+				this.fireCallback('onPreviousImage');
+				this.displayImage(adjacentImageindex);
+			}
+		}
+	}
+
 	sen.gallery.prototype.displayImage = function(imageIndex) {
-		if (!this.hasImage(imageIndex)) { return false; }
+		if (
+			!this.hasImage(imageIndex) ||
+			this.duringImageExchange === true
+		) { return false; }
+		this.duringImageExchange = true;
+		this.fireCallback('onDisplayImage', {
+			imageIndex: imageIndex
+		});
+		if (imageIndex === this.getCurrentImageIndex()) { return false; }
 		for (var instance in this.instances) {
 		   if (this.instances.hasOwnProperty(instance)) {
-		   	if (imageIndex === this.getCurrentImageIndex()) { return false; }
 		   	var $galleryDiv = this.instances[instance];
 		   	this.currentImageIndex = imageIndex;
 		   	this.markThumbnailOnStrip(imageIndex, $galleryDiv);
 		   	this.setCurrentImageDescription(this.images[imageIndex].description, $galleryDiv);
+		   	this.setCurrentImageTitle(this.images[imageIndex].title, $galleryDiv);
 		   	this.replaceCurrentImage(imageIndex, $galleryDiv);
 		   	this.reloadGalleryCounters($galleryDiv);
+		   	this.reloadGalleryNavButtons($galleryDiv);
+		   	this.fireCallback('onImageChanged', {
+		   		imageIndex: imageIndex,
+		   		instance: instance
+		   	});
 		   }
 		}
 	}
@@ -221,6 +280,15 @@
 		$descDiv.slideUp(500, function() {
 			if (description.length > 0) {
 				$descDiv.html('<span>' + description + '</span>').slideDown(500);
+			}
+		});
+	}
+
+	sen.gallery.prototype.setCurrentImageTitle = function(title, $galleryDiv) {
+		var $titleDiv = $galleryDiv.find('.sen-gal-current-image-title');
+		$titleDiv.fadeOut(500, function() {
+			if (title.length > 0) {
+				$titleDiv.html('<span>' + title + '</span>').fadeIn(500);
 			}
 		});
 	}
@@ -240,6 +308,7 @@
 			setTimeout(function(){
 				imageFrame.removeClass('exchanging');
 			}, 100);
+			this.duringImageExchange = false;
 		}.bind(this), 500);
 	}
 
@@ -279,14 +348,16 @@
 	}
 
 	sen.gallery.prototype.renderGallery = function(selector, templateName) {
-		var galleryElement = $(selector);
-		if (galleryElement.length <= 0) { return false; }
+		var $galleryPlaceholder = $(selector);
+		if ($galleryPlaceholder.length <= 0) { return false; }
 		Q
 			.fcall(function(){ return this.getHTML(templateName); }.bind(this))
 			.then(function(renderedGallery){
-				galleryElement.replaceWith(renderedGallery);
-				galleryElement.attr('data-template', templateName);
-				this.addGalleryInstance($('#sen-gallery-'+this.id+'-'+templateName));
+				$galleryPlaceholder.replaceWith(renderedGallery);
+				$galleryPlaceholder.attr('data-template', templateName);
+				var $renderedGallery = $('#sen-gallery-'+this.id+'-'+templateName);
+				this.addGalleryInstance($renderedGallery);
+				this.reloadGalleryNavButtons($renderedGallery);
 				this.fireCallback('onRenderedGallery');
 				this.fireCallback('onRenderedTemplate-'+templateName);
 			}.bind(this));
