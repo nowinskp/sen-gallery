@@ -37,10 +37,6 @@
 		}
 	}
 
-	sen.gallery.prototype.loadImages = function(imagesArray) {
-		this.images = imagesArray;
-	}
-
 	sen.gallery.prototype.setCallback = function(callbackName, callbackFunction) {
 		if (
 			typeof(this.callbacks[callbackName]) !== undefined &&
@@ -61,6 +57,12 @@
 			this.callbacks[callbackName] = false;
 		}
 	}
+
+
+	sen.gallery.prototype.loadImages = function(imagesArray) {
+		this.images = imagesArray;
+	}
+
 
 	/**
 	 * GET HTML

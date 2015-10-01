@@ -6,6 +6,7 @@
 # with WordPress integration.
 #
 # Required libraries:
+# -> Mustache.php
 # -> Mustache.js
 
 

@@ -1,1 +1,9 @@
-<div>{{ someVariable }}</div>
+<div
+	id="sen-gallery-{{ gallery.id }}"
+	class="sen-gallery {{ gallery.js }}"
+	data-gallery-options="{{ gallery.options }}">
+	{{> partials/header }}
+	{{> partials/current-image }}
+	{{> partials/description }}
+	{{> partials/thumbnail-strip }}
+</div>

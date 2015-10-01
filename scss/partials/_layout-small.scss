@@ -24,86 +24,84 @@
 		img {
 			max-width: 100%;
 		}
-		.sen-gallery-current-image-frame {
+		.sen-gallery-current-image {
 			background: #000;
-			.sen-gallery-current-image {
-				position: relative;
-				background-image: url('../img/image-preloader.gif');
-				background-repeat: no-repeat;
-				background-position: center center;
-				.sen-gallery-current-image-frame-buttons {
-					width: 100%;
-					height: 100%;
+			position: relative;
+			background-image: url('../img/image-preloader.gif');
+			background-repeat: no-repeat;
+			background-position: center center;
+			.sen-gallery-current-image-buttons {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				overflow: hidden;
+				.sen-gal-image-link-next,
+				.sen-gal-image-link-prev,
+				.sen-gal-image-link-direct {
+					background-color: rgba(0, 0, 0, .25);
+					background-position: center center;
+					background-repeat: no-repeat;
+					text-indent: rem-calc(-99999);
+					@include transition(translate, 300ms, ease-out);
+				}
+				.sen-gal-image-link-next,
+				.sen-gal-image-link-prev {
 					position: absolute;
-					overflow: hidden;
-					.sen-gal-image-link-next,
-					.sen-gal-image-link-prev,
+					width: rem-calc(64);
+					height: 100%;
+					top: 0;
+				}
+				.sen-gal-image-link-direct {
+					position: absolute;
+					width: rem-calc(96);
+					height: rem-calc(96);
+					left: 50%;
+					top: 50%;
+					margin-left: rem-calc(-48);
+					margin-top: rem-calc(-48);
+					@include border-radius(8px);
+					background-image: url('../img/icon-zoom.png');
+					@include background-size(50%);
+					@include translate(0, rem-calc(-600));
+				}
+				.sen-gal-image-link-prev {
+					background-image: url('../img/icon-arrow-left.png');
+					left: 0;
+					@include translate(rem-calc(-96));
+				}
+				.sen-gal-image-link-next {
+					background-image: url('../img/icon-arrow-right.png');
+					right: 0;
+					@include translate(rem-calc(96));
+				}
+				&:hover {
 					.sen-gal-image-link-direct {
-						background-color: rgba(0, 0, 0, .25);
-						background-position: center center;
-						background-repeat: no-repeat;
-						text-indent: rem-calc(-99999);
-						@include transition(translate, 300ms, ease-out);
-					}
-					.sen-gal-image-link-next,
-					.sen-gal-image-link-prev {
 						position: absolute;
-						width: rem-calc(64);
-						height: 100%;
-						top: 0;
-					}
-					.sen-gal-image-link-direct {
-						position: absolute;
-						width: rem-calc(96);
-						height: rem-calc(96);
-						left: 50%;
-						top: 50%;
-						margin-left: rem-calc(-48);
-						margin-top: rem-calc(-48);
-						@include border-radius(8px);
-						background-image: url('../img/icon-zoom.png');
-						@include background-size(50%);
-						@include translate(0, rem-calc(-600));
+						@include translate(0, 0);
 					}
 					.sen-gal-image-link-prev {
-						background-image: url('../img/icon-arrow-left.png');
-						left: 0;
-						@include translate(rem-calc(-96));
+						@include translate(0);
 					}
 					.sen-gal-image-link-next {
-						background-image: url('../img/icon-arrow-right.png');
-						right: 0;
-						@include translate(rem-calc(96));
+						@include translate(0);
 					}
-					&:hover {
-						.sen-gal-image-link-direct {
-							position: absolute;
-							@include translate(0, 0);
-						}
-						.sen-gal-image-link-prev {
-							@include translate(0);
-						}
-						.sen-gal-image-link-next {
-							@include translate(0);
-						}
-						.sen-gal-image-link-direct:hover {
-							width: rem-calc(128);
-							height: rem-calc(128);
-							margin-left: rem-calc(-64);
-							margin-top: rem-calc(-64);
-						}
-						.sen-gal-image-link-prev:hover,
-						.sen-gal-image-link-next:hover {
-							width: rem-calc(128);
-						}
+					.sen-gal-image-link-direct:hover {
+						width: rem-calc(128);
+						height: rem-calc(128);
+						margin-left: rem-calc(-64);
+						margin-top: rem-calc(-64);
+					}
+					.sen-gal-image-link-prev:hover,
+					.sen-gal-image-link-next:hover {
+						width: rem-calc(128);
 					}
 				}
 			}
-			.sen-gallery-current-image-description {
-				background: #333;
-				color: #ccc;
-				padding: rem-calc(15 10 20 10);
-			}
+		}
+		.sen-gallery-current-image-description {
+			background: #333;
+			color: #ccc;
+			padding: rem-calc(15 10 20 10);
 		}
 		.sen-gallery-thumbnails {
 			@include clearfix;

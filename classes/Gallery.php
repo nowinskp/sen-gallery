@@ -16,7 +16,8 @@ class Gallery {
 	// $images[#]['image']['thumbnail']
 	// $images[#]['image']['large']
 	// $images[#]['image']['full']
-	// $images[#]['link']
+	// $images[#]['link']['direct']
+	// $images[#]['link']['gallery'] <- !!! this set up automatically
 	protected $images = [];
 
 	// an array of gallery setup options.
@@ -30,12 +31,18 @@ class Gallery {
 	protected $imageCount;
 	protected $currentImage;
 
+	// mustache engine
+	private $m;
+
 
 	public function __construct($imagesArray, $options = []) {
 		$this->id = self::$instance;
 		self::$instance++;
 		$this->options = $options;
 		$this->loadImageArray($imagesArray);
+		$this->m = new \Mustache_Engine([
+			'loader' => new \Mustache_Loader_FilesystemLoader(__DIR__ .'/../templates/'),
+		]);
 	}
 
 
@@ -51,24 +58,29 @@ class Gallery {
 	 *                        $images[#]['image']['thumbnail']
 	 *                        $images[#]['image']['large']
 	 *                        $images[#]['image']['full']
-	 *                        $images[#]['link']
+	 *                        $images[#]['link']['direct']
 	 */
 	protected function loadImageArray($imagesArray) {
 		$this->images = $imagesArray;
-		$this->setImageIndexes();
 		$this->imageCount = count($this->images);
 		$currentImage = $_GET['gal-'.$this->id.'-img'];
 		$this->currentImage = ( isset($this->images[$currentImage]) ) ? intval($currentImage) : 0;
+		$this->setImageDynamicFields();
 	}
 
 
 	/**
-	 * SET IMAGE INDEXES
-	 * sets $images array index to be available inside each $image array
+	 * SET IMAGE DYNAMIC FIELDS
+	 * sets $images array dynamic fields (such as index, gallery link)
+	 * to be available inside each $image array
 	 */
-	protected function setImageIndexes() {
+	protected function setImageDynamicFields() {
 		foreach ($this->images as $index => &$image) {
 			$image['index'] = $index;
+			$image['link']['gallery'] = $this->getImageUrl($image, 'gallery');
+			if ($index == $this->currentImage) {
+				$image['active'] = 'active';
+			}
 		}
 	}
 
@@ -79,10 +91,13 @@ class Gallery {
 	 */
 	public function getCurrentImage() {
 		if (isset($this->images[$this->currentImage])) {
-			return $this->images[$this->currentImage];
+			$image = $this->images[$this->currentImage];
 		} else {
-			return $this->images[0];
+			$image = $this->images[0];
 		}
+		$image['link']['prev'] = $this->getImageUrl($image, 'prev');
+		$image['link']['next'] = $this->getImageUrl($image, 'next');
+		return $image;
 	}
 
 
@@ -210,78 +225,19 @@ class Gallery {
 		return $output;
 	}
 
-
-	function renderGalleryHeader() {
-		$img = $this->getCurrentImage();
-		$index = $img['index']+1;
-		$output = "
-			<header class=\"sen-gallery-header\">
-				<div class=\"col-left\">
-					<div class=\"counter\">$index/{$this->imageCount}</div>
-					<h1>{$img['title']}</h1>
-				</div>
-				<div class=\"col-right\">
-					<div class=\"sen-gal-share-buttons\">
-						
-					</div>
-					<a href=\"#fullscreen\" class=\"sen-gal-fullscreen-btn\">Pełny ekran</a>
-				</div>
-			</header>
-		";
-		return $output;
-	}
-
-
-	function renderCurrentImageFrame() {
-		$img = $this->getCurrentImage();
-		if ($img['description']) {
-			$descriptionHTML = "<div class=\"sen-gallery-current-image-description\">{$img['description']}</div>";
-		} else {
-			$descriptionHTML = '';
-		}
-		$output = "
-			<div class=\"sen-gallery-current-image-frame\">
-				<div class=\"sen-gallery-current-image\">
-					<div class=\"sen-gallery-current-image-frame-buttons\">
-						{$this->getImageLinkTag($img, 'prev')}
-						{$this->getImageLinkTag($img, 'direct')}
-						{$this->getImageLinkTag($img, 'next')}
-					</div>
-					{$this->renderImageDiv($img, 'full')}
-				</div>
-				$descriptionHTML
-			</div>
-		";
-		return $output;
-	}
-
-	/**
-	 * RENDER THUMBNAIL STRIP
-	 * @return string - html output
-	 */
-	public function renderThumbnailsStrip() {
-		if (!$this->options['showThumbs']) {
-			return '';
-		}
-		$output = '<div class="sen-gallery-thumbnails">';
-		$output .= '<div class="sen-gallery-thumbnails-strip">';
-		foreach ($this->images as $image) {
-			$output .= "<a href=\"{$this->getImageUrl($image, 'gallery')}\">";
-			$output .= $this->renderImageDiv($image, 'thumbnail');
-			$output .= "</a>";
-		}
-		$output .= '</div>';
-		$output .= '</div>';
-		return $output;
-	}
-
 	public function renderGallery() {
-		$output = '
-			<div id="sen-gallery-'.$this->id.'" class="sen-gallery no-js" data-gallery-options="'.htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8').'">';
-		$output .= $this->renderGalleryHeader();
-		$output .= $this->renderCurrentImageFrame();
-		$output .= $this->renderThumbnailsStrip();
-		$output .= '</div>';
-		return $output;
+		$tmpl = $this->m->loadTemplate('inline');
+		$html = $tmpl->render([
+			'gallery' => [
+				'id'                   => $this->id,
+				'js'                   => 'no-js',
+				'total-image-count'    => $this->imageCount,
+				'current-image-number' => ($this->currentImage + 1),
+				'options'              => htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8')
+			],
+			'current-image' => $this->getCurrentImage(),
+			'images' => $this->images
+		]);
+		return $html;
 	}
 }

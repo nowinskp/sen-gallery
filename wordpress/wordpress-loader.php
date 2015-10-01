@@ -42,7 +42,7 @@ function sen_galleries_getWPGalleryCode( $output, $attr ) {
 	$galleryDataArray = $WPGalleryOutput->getOutput($output, $attr);
 
 	if ($galleryDataArray) {
-		$gallery = new sen\galleries\Gallery(
+	$gallery = new sen\galleries\Gallery(
 			$galleryDataArray['images'],
 			$galleryDataArray['options']
 		);

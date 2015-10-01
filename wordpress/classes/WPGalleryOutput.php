@@ -77,12 +77,12 @@ foreach ( $attachments as $id => $attachment ) {
 
 	if (isset($attr['link'])) {
 		if ($attr['link'] == 'file') {
-			$image['link'] = wp_get_attachment_image_src($id, 'full', false)[0];
+			$image['link']['direct'] = wp_get_attachment_image_src($id, 'full', false)[0];
 		} else {
-			$image['link'] = false;
+			$image['link']['direct'] = false;
 		}
 	} else {
-		$image['link'] = get_permalink($id);
+		$image['link']['direct'] = get_permalink($id);
 	}
 
 	$images[] = $image;
