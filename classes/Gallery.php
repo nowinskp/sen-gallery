@@ -178,6 +178,15 @@ class Gallery {
 		return $output;
 	}
 
+	function renderGalleryHeader() {
+		$output = "
+			<div class=\"sen-gallery-header\">
+				[ ... ]
+			</div>
+		";
+		return $output;
+	}
+
 
 	function renderCurrentImageFrame() {
 		$img = $this->getCurrentImage();
@@ -215,6 +224,7 @@ class Gallery {
 	public function renderGallery() {
 		$output = '
 			<div id="gallery-'.$this->id.'" class="sen-gallery no-js" data-gallery-options="'.htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8').'">';
+		$output .= $this->renderGalleryHeader();
 		$output .= $this->renderCurrentImageFrame();
 		$output .= $this->renderThumbnailsStrip();
 		$output .= '</div>';
