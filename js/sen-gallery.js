@@ -22,6 +22,7 @@
 		templatePath: false,
 		loopGallery: true,
 		firstImageIndex: false,
+		stripScrollStepSize: 300,
 	}
 
 
@@ -146,6 +147,15 @@
 				$galleryDiv.on('click', '.sen-gal-image-link-prev', function(event) {
 					event.preventDefault();
 					this.displayAdjacentImage('prev');
+				}.bind(this));
+				// STRIP NAV BUTTONS
+				$galleryDiv.on('click', '.sen-gal-move-strip-left', function(event) {
+					event.preventDefault();
+					this.moveStrip($galleryDiv, -this.options.stripScrollStepSize);
+				}.bind(this));
+				$galleryDiv.on('click', '.sen-gal-move-strip-right', function(event) {
+					event.preventDefault();
+					this.moveStrip($galleryDiv, this.options.stripScrollStepSize);
 				}.bind(this));
 		   }
 		}
@@ -362,6 +372,7 @@
 				var $renderedGallery = $('#sen-gallery-'+this.id+'-'+templateName);
 				this.addGalleryInstance($renderedGallery);
 				this.reloadGalleryNavButtons($renderedGallery);
+				this.refreshThumbnailStrip($renderedGallery);
 				this.fireCallback('onRenderedGallery');
 				this.fireCallback('onRenderedTemplate-'+templateName);
 			}.bind(this));
@@ -385,6 +396,7 @@
 					{
 						gallery: {
 							id: this.id,
+							js: 'js',
 							'total-image-count': this.images.length,
 							'current-image-number': this.getCurrentImageNumber(),
 							'show-thumbs': this.options.showThumbs
@@ -433,11 +445,56 @@
 
 	sen.gallery.prototype.markThumbnailOnStrip = function(imageIndex, $galleryDiv) {
 		if (!this.hasImage(imageIndex)) { return false; }
-		var strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
-		strip.find('.sen-gal-image').removeClass('active');
-		strip.find('.sen-gal-image[data-index="'+imageIndex+'"]').addClass('active');
+		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
+		$strip.find('.sen-gal-image').removeClass('active');
+		$strip.find('.sen-gal-image[data-index="'+imageIndex+'"]').addClass('active');
 	}
 
+	sen.gallery.prototype.calculateThumbnailStripWidth = function($galleryDiv) {
+		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
+		var $thumbs = $strip.children();
+		var width = $thumbs.first().outerWidth();
+		var count = $thumbs.length;
+		return width*count;
+	}
+
+	sen.gallery.prototype.refreshThumbnailStrip = function($galleryDiv) {
+		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
+		var $container = $galleryDiv.find('.sen-gal-thumbnails');
+		var stripWidth = this.calculateThumbnailStripWidth($galleryDiv);
+		$strip.css('margin-left', 0);
+		$strip.width(stripWidth);
+
+	}
+
+	sen.gallery.prototype.moveStrip = function($galleryDiv, distance) {
+		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
+		var $container = $galleryDiv.find('.sen-gal-thumbnails');
+		distance = helpers.convertPxValue(distance, 'float');
+		var currentMargin = helpers.convertPxValue($strip.css('margin-left'), 'float');
+		// moving strip left
+		if (distance < 0) {
+			var containerWidth = helpers.convertPxValue($container.outerWidth(), 'float');
+			var stripWidth = helpers.convertPxValue($strip.outerWidth(), 'float');
+			var maxDistance = Math.abs(stripWidth - containerWidth);
+			if (Math.abs(currentMargin) < maxDistance) {
+				if (Math.abs(currentMargin + distance) <= maxDistance) {
+					$strip.css('margin-left', currentMargin + distance);
+				} else {
+					$strip.css('margin-left', -maxDistance);
+				}
+			}
+		// moving strip right
+		} else if (distance > 0) {
+			if (currentMargin < 0 ) {
+				if (Math.abs(currentMargin) >= distance) {
+					$strip.css('margin-left', currentMargin + distance);
+				} else {
+					$strip.css('margin-left', 0);
+				}
+			}
+		}
+	}
 
 
 	window.sen.gallery = sen.gallery;

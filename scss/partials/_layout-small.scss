@@ -84,12 +84,12 @@
 				.sen-gal-image-link-prev {
 					background-image: url('../img/icon-arrow-left.png');
 					left: 0;
-					@include translate(rem-calc(-96));
+					@include translateX(rem-calc(-96));
 				}
 				.sen-gal-image-link-next {
 					background-image: url('../img/icon-arrow-right.png');
 					right: 0;
-					@include translate(rem-calc(96));
+					@include translateX(rem-calc(96));
 				}
 				&:hover {
 					.sen-gal-image-link-direct {
@@ -97,10 +97,10 @@
 						@include translate(0, 0);
 					}
 					.sen-gal-image-link-prev {
-						@include translate(0);
+						@include translateX(0);
 					}
 					.sen-gal-image-link-next {
-						@include translate(0);
+						@include translateX(0);
 					}
 					.sen-gal-image-link-direct:hover {
 						width: rem-calc(128);
@@ -126,16 +126,91 @@
 		.sen-gal-thumbnails {
 			@include clearfix;
 			background: #111;
-			padding: rem-calc(5);
-			overflow: hidden;
 			.sen-gal-thumbnails-strip {
 				width: auto;
-				height: rem-calc(105);
 				margin: 0 auto;
+				padding: rem-calc(5);
 				a {
 					display: inline-block;
 					width: rem-calc(120);
 					padding: rem-calc(5);
+				}
+			}
+		}
+
+		&.js {
+			.sen-gal-thumbnails {
+				overflow: hidden;
+				position: relative;
+				margin: 0;
+				padding: 0;
+				&::before,
+				&::after {
+					display: block;
+					content: '';
+					position: absolute;
+					width: rem-calc(15);
+					height: 100%;
+					top: 0;
+					z-index: 15;
+				}
+				&::before {
+					left: 0;
+					@include background-image(linear-gradient(to left, rgba(0,0,0,0), rgba(0,0,0,1)));
+				}
+				&::after {
+					right: 0;
+					@include background-image(linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,1)));
+				}
+				.sen-gal-move-strip-left,
+				.sen-gal-move-strip-right {
+					display: block;
+					position: absolute;
+					width: rem-calc(48);
+					height: 100%;
+					top: 0;
+					margin: 0;
+					padding: 0;
+					z-index: 20;
+					background-color: rgba(0, 0, 0, .5);
+					background-position: center center;
+					background-repeat: no-repeat;
+					text-indent: rem-calc(-99999);
+					@include background-size(13px, 30px);
+					@include transition(translate, 300ms, ease-out);
+				}
+				.sen-gal-move-strip-right {
+					background-image: url('../img/icon-arrow-left.png');
+					left: 0;
+					@include translateX(rem-calc(-64));
+				}
+				.sen-gal-move-strip-left {
+					background-image: url('../img/icon-arrow-right.png');
+					right: 0;
+					@include translateX(rem-calc(64));
+				}
+				&:hover {
+					cursor: pointer;
+					.sen-gal-move-strip-right {
+						@include translateX(0);
+					}
+					.sen-gal-move-strip-left {
+						@include translateX(0);
+					}
+					.sen-gal-move-strip-right:hover,
+					.sen-gal-move-strip-left:hover {
+						width: rem-calc(80);
+					}
+				}
+				.sen-gal-thumbnails-strip {
+					position: relative;
+					z-index: 10;
+					@include clearfix;
+					@include transition(translate, 500ms, ease-out);
+					> a,
+					> div {
+						float: left;
+					}
 				}
 			}
 		}
@@ -150,9 +225,13 @@
 		}
 		.sen-gal-thumbnails {
 			text-align: center;
+			.sen-gal-strip-nav {
+				display: none;
+			}
 			.sen-gal-thumbnails-strip {
 				height: auto;
 				display: inline-block;
+				position: relative;
 			}
 		}
 	}

@@ -1,9 +1,11 @@
 {{# gallery.show-thumbs }}
 <div class="sen-gal-thumbnails">
-<div class="sen-gal-thumbnails-strip">
-{{# images }}
-	<a href="{{ link.gallery }}">{{> partials/image-thumbnail }}</a>
-{{/ images }}
-</div>
+	<span class="sen-gal-btn sen-gal-move-strip-left"></span>
+	<span class="sen-gal-btn sen-gal-move-strip-right"></span>
+	<div class="sen-gal-thumbnails-strip">
+	{{# images }}
+		<a href="{{ link.gallery }}">{{> partials/image-thumbnail }}</a>
+	{{/ images }}
+	</div>
 </div>
 {{/ gallery.show-thumbs }}
