@@ -59,11 +59,16 @@ function sen_loadGalleryScripts(){
 
 	$currentDir = sen_get_current_dir_uri(__DIR__);
 
-	// wp_register_script(
-	// 	'sen-helpers-extend',
-	// 	$currentDir.'/js/extend.js',
-	// 	['jquery'], false, false
-	// );
-	// wp_enqueue_script( 'sen-helpers-extend' );
+	wp_enqueue_style(
+		'sen-gallery-styles',
+		$currentDir.'/../css/style.css'
+	);
+
+	wp_register_script(
+		'sen-gallery',
+		$currentDir.'/../js/_sen-gallery.min.js',
+		['jquery'], false, false
+	);
+	wp_enqueue_script( 'sen-gallery' );
 
 }
