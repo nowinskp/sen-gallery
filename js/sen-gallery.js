@@ -25,6 +25,23 @@
 		stripScrollStepSize: 300,
 	}
 
+	sen.gallery.prototype.selectors = {
+		btnMoveStripLeft: '.sen-gal-move-strip-left',
+		btnMoveStripRight: '.sen-gal-move-strip-right',
+		btnNextImage: '.sen-gal-image-link-next',
+		btnPrevImage: '.sen-gal-image-link-prev',
+		currentImage: '.sen-gal-current-image',
+		currentImageDescription: '.sen-gal-current-image-description',
+		currentImageFrame: '.sen-gal-current-image-frame',
+		currentImageNumber: '.sen-gal-current-image-number',
+		currentImageTitle: '.sen-gal-current-image-title',
+		jsonDataDiv: '.sen-gal-images-json-data',
+		singleThumbnail: '.thumbnail',
+		thumbnailStrip: '.sen-gal-thumbnails-strip',
+		thumbnailStripContainer: '.sen-gal-thumbnails',
+		totalImageCount: '.sen-gal-total-image-count',
+	}
+
 
 /***************************************
 	* Gallery init
@@ -131,29 +148,29 @@
 		   if (this.instances.hasOwnProperty(instance)) {
 				var $galleryDiv = this.instances[instance];
 				// THUMBNAIL STRIP IMAGE SELECTION
-				$galleryDiv.on('click', '.sen-gal-thumbnails-strip', function(event) {
+				$galleryDiv.on('click', this.selectors.thumbnailStrip, function(event) {
 					event.preventDefault();
 				});
-				$galleryDiv.on('click', '.thumbnail', function(event) {
+				$galleryDiv.on('click', this.selectors.singleThumbnail, function(event) {
 					event.preventDefault();
 					var thumbId = event.currentTarget.dataset.index;
 					this.displayImage(thumbId);
 				}.bind(this));
 				// CURRENT IMAGE NAV BUTTONS
-				$galleryDiv.on('click', '.sen-gal-image-link-next', function(event) {
+				$galleryDiv.on('click', this.selectors.btnNextImage, function(event) {
 					event.preventDefault();
 					this.displayAdjacentImage('next');
 				}.bind(this));
-				$galleryDiv.on('click', '.sen-gal-image-link-prev', function(event) {
+				$galleryDiv.on('click', this.selectors.btnPrevImage, function(event) {
 					event.preventDefault();
 					this.displayAdjacentImage('prev');
 				}.bind(this));
 				// STRIP NAV BUTTONS
-				$galleryDiv.on('click', '.sen-gal-move-strip-left', function(event) {
+				$galleryDiv.on('click', this.selectors.btnMoveStripLeft, function(event) {
 					event.preventDefault();
 					this.moveStrip($galleryDiv, -this.options.stripScrollStepSize);
 				}.bind(this));
-				$galleryDiv.on('click', '.sen-gal-move-strip-right', function(event) {
+				$galleryDiv.on('click', this.selectors.btnMoveStripRight, function(event) {
 					event.preventDefault();
 					this.moveStrip($galleryDiv, this.options.stripScrollStepSize);
 				}.bind(this));
@@ -191,11 +208,11 @@
 		var $galleryDiv = $(selector);
 		if (
 			$galleryDiv.length > 0 &&
-			this.importImagesJSONDataFromDiv(selector+' .sen-gal-images-json-data')
+			this.importImagesJSONDataFromDiv(selector+' '+this.selectors.jsonDataDiv)
 		) {
 			var galleryOptionsJSON = $galleryDiv.data('gallery-options');
 			this.options = helpers.extend( this.options, galleryOptionsJSON );
-			this.currentImageIndex = $galleryDiv.find('.sen-gal-current-image').data('index');
+			this.currentImageIndex = $galleryDiv.find(this.selectors.currentImage).data('index');
 			this.log('div imported successfully');
 			this.fireCallback('onImportedDiv');
 			return true;
@@ -322,8 +339,8 @@
 
 	sen.gallery.prototype.replaceCurrentImage = function(imageIndex, $galleryDiv) {
 		if (!this.hasImage(imageIndex)) { return false; }
-		var imageFrame = $galleryDiv.find('.sen-gal-current-image-frame');
-		var currentImage = $galleryDiv.find('.sen-gal-current-image');
+		var imageFrame = $galleryDiv.find(this.selectors.currentImageFrame);
+		var currentImage = $galleryDiv.find(this.selectors.currentImage);
 		imageFrame.addClass('exchanging');
 		setTimeout(function(){
 			var $newImage = $(Mustache.render(
@@ -331,7 +348,7 @@
 				this.images[imageIndex]
 			));
 			currentImage.replaceWith($newImage[0]);
-			var $newCurrentImage = $galleryDiv.find('.sen-gal-current-image');
+			var $newCurrentImage = $galleryDiv.find(this.selectors.currentImage);
 			setTimeout(function(){
 				imageFrame.removeClass('exchanging');
 			}, 100);
@@ -340,7 +357,7 @@
 	}
 
 	sen.gallery.prototype.setCurrentImageDescription = function(description, $galleryDiv) {
-		var $descDiv = $galleryDiv.find('.sen-gal-current-image-description');
+		var $descDiv = $galleryDiv.find(this.selectors.currentImageDescription);
 		$descDiv.slideUp(500, function() {
 			if (description.length > 0) {
 				$descDiv.html('<span>' + description + '</span>').slideDown(500);
@@ -349,7 +366,7 @@
 	}
 
 	sen.gallery.prototype.setCurrentImageTitle = function(title, $galleryDiv) {
-		var $titleDiv = $galleryDiv.find('.sen-gal-current-image-title');
+		var $titleDiv = $galleryDiv.find(this.selectors.currentImageTitle);
 		$titleDiv.fadeOut(500, function() {
 			if (title.length > 0) {
 				$titleDiv.html('<span>' + title + '</span>').fadeIn(500);
@@ -430,16 +447,16 @@
 
 	sen.gallery.prototype.reloadGalleryCounters = function($galleryDiv) {
 		$galleryDiv
-			.find('.sen-gal-current-image-number')
+			.find(this.selectors.currentImageNumber)
 			.text(this.getCurrentImageNumber());
 		$galleryDiv
-			.find('.sen-gal-total-image-count')
+			.find(this.selectors.totalImageCount)
 			.text(this.images.length);
 	}
 
 	sen.gallery.prototype.reloadGalleryNavButtons = function($galleryDiv) {
-		var btnNext = $galleryDiv.find('.sen-gal-image-link-next');
-		var btnPrev = $galleryDiv.find('.sen-gal-image-link-prev');
+		var btnNext = $galleryDiv.find(this.selectors.btnNextImage);
+		var btnPrev = $galleryDiv.find(this.selectors.btnPrevImage);
 		if (this.getAdjacentImageIndex('next') === false) {
 			btnNext.hide();
 		} else {
@@ -459,17 +476,17 @@
 
 	sen.gallery.prototype.markThumbnailOnStrip = function(imageIndex, $galleryDiv) {
 		if (!this.hasImage(imageIndex)) { return false; }
-		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
-		$strip.find('.sen-gal-image').removeClass('active');
-		$strip.find('.sen-gal-image[data-index="'+imageIndex+'"]').addClass('active');
+		var $strip = $galleryDiv.find(this.selectors.thumbnailStrip);
+		$strip.find(this.selectors.singleThumbnail).removeClass('active');
+		$strip.find(this.selectors.singleThumbnail+'[data-index="'+imageIndex+'"]').addClass('active');
 	}
 
 	sen.gallery.prototype.centerStripOnThumb = function(imageIndex, $galleryDiv) {
 		if (!this.hasImage(imageIndex)) { return false; }
 
-		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
-		var $container = $galleryDiv.find('.sen-gal-thumbnails');
-		var $thumb = $strip.find('.sen-gal-image[data-index="'+imageIndex+'"]');
+		var $strip = $galleryDiv.find(this.selectors.thumbnailStrip);
+		var $container = $galleryDiv.find(this.selectors.thumbnailStripContainer);
+		var $thumb = $strip.find(this.selectors.singleThumbnail+'[data-index="'+imageIndex+'"]');
 
 		var thumbWidth = helpers.convertPxValue($thumb.outerWidth(), 'float');
 		var thumbOffset = helpers.convertPxValue($thumb.position().left, 'float');
@@ -485,7 +502,7 @@
 	}
 
 	sen.gallery.prototype.calculateThumbnailStripWidth = function($galleryDiv) {
-		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
+		var $strip = $galleryDiv.find(this.selectors.thumbnailStrip);
 		var $thumbs = $strip.children();
 		var width = $thumbs.first().outerWidth();
 		var count = $thumbs.length;
@@ -493,8 +510,8 @@
 	}
 
 	sen.gallery.prototype.calculateStripMoveParams = function($galleryDiv) {
-		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
-		var $container = $galleryDiv.find('.sen-gal-thumbnails');
+		var $strip = $galleryDiv.find(this.selectors.thumbnailStrip);
+		var $container = $galleryDiv.find(this.selectors.thumbnailStripContainer);
 		var currentMargin = helpers.convertPxValue($strip.css('margin-left'), 'float');
 		var containerWidth = helpers.convertPxValue($container.outerWidth(), 'float');
 		var stripWidth = helpers.convertPxValue($strip.outerWidth(), 'float');
@@ -506,8 +523,8 @@
 	}
 
 	sen.gallery.prototype.prepareThumbnailStrip = function($galleryDiv) {
-		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
-		var $container = $galleryDiv.find('.sen-gal-thumbnails');
+		var $strip = $galleryDiv.find(this.selectors.thumbnailStrip);
+		var $container = $galleryDiv.find(this.selectors.thumbnailStripContainer);
 		var stripWidth = this.calculateThumbnailStripWidth($galleryDiv);
 		if (helpers.convertPxValue($strip.css('margin-left'), 'float') <= 0) {
 			$strip.css('margin-left', 0);
@@ -517,8 +534,8 @@
 	}
 
 	sen.gallery.prototype.reloadStripNavVisibility = function($galleryDiv, finalParams) {
-		var btnRight = $galleryDiv.find('.sen-gal-thumbnails .sen-gal-move-strip-left');
-		var btnLeft = $galleryDiv.find('.sen-gal-thumbnails .sen-gal-move-strip-right');
+		var btnRight = $galleryDiv.find(this.selectors.btnMoveStripLeft);
+		var btnLeft = $galleryDiv.find(this.selectors.btnMoveStripRight);
 		// button - move strip right
 		if (
 			finalParams.maxDistance > 0 &&
@@ -537,7 +554,7 @@
 	}
 
 	sen.gallery.prototype.moveStrip = function($galleryDiv, distance) {
-		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
+		var $strip = $galleryDiv.find(this.selectors.thumbnailStrip);
 		var stripParams = this.calculateStripMoveParams($galleryDiv);
 		distance = helpers.convertPxValue(distance, 'float');
 		var newDistance = stripParams.currentMargin;
