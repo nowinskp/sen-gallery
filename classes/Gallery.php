@@ -23,7 +23,6 @@ class Gallery {
 	// supported options w/ their defaults:
 	// [
 	// 	'showThumbs' => true  -- display images thumbnail list
-	// 	'thumbColumns' => 5  -- how many thumbs to display when js is disabled
 	// ]
 	protected $options;
 
