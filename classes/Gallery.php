@@ -225,7 +225,11 @@ class Gallery {
 		return $output;
 	}
 
-	public function renderGallery() {
+	public function getGalleryImageDataJSON() {
+		return json_encode($this->images);
+	}
+
+	public function renderGallery($includeJSONData = true) {
 		$tmpl = $this->m->loadTemplate('inline');
 		$html = $tmpl->render([
 			'gallery' => [
@@ -233,7 +237,8 @@ class Gallery {
 				'js'                   => 'no-js',
 				'total-image-count'    => $this->imageCount,
 				'current-image-number' => ($this->currentImage + 1),
-				'options'              => htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8')
+				'options'              => htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8'),
+				'imagejson'            => $includeJSONData ? htmlentities($this->getGalleryImageDataJSON(), ENT_QUOTES, 'UTF-8') : false,
 			],
 			'current-image' => $this->getCurrentImage(),
 			'images' => $this->images
