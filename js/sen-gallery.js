@@ -69,7 +69,9 @@
 		) {
 			this.currentImageIndex = this.options.firstImageIndex;
 		}
+		this.registerCallbacks();
 	}
+
 
 /***************************************
 	* Helpers
@@ -100,24 +102,27 @@
 		this.loadGalleryEvents();
 	}
 
+
 /***************************************
 	* Callbacks setup & methods
 	* --------------------------------- */
 
-	 sen.gallery.prototype.callbacks = {
-	 	onNextImage: null,
-	 	onPrevImage: null,
-	 	onImageSelect: null,
-	 	onImageLoad: null,
-	 	onFullscreenLoad: null,
-	 	onImportedDiv: null,
-	 	onRenderedGallery: null,
-		// onRenderedTemplate-[templateName]: null - dynamic
-	 	onDisplayImage: null,
-	 	onImageChanged: null,
-	 	onNextImage: null,
-	 	onPreviousImage: null,
-	 }
+	sen.gallery.prototype.registerCallbacks = function() {
+		this.callbacks = {
+			onNextImage: null,
+			onPrevImage: null,
+			onImageSelect: null,
+			onImageLoad: null,
+			onFullscreenLoad: null,
+			onImportedDiv: null,
+			onRenderedGallery: null,
+			// onRenderedTemplate-[templateName]: null - dynamic
+			onDisplayImage: null,
+			onImageChanged: null,
+			onNextImage: null,
+			onPreviousImage: null,
+		}
+	}
 
 	sen.gallery.prototype.setCallback = function(callbackName, callbackFunction) {
 		if (typeof(callbackFunction) === 'function') {
@@ -188,6 +193,7 @@
 		   }
 		}
 	}
+
 
 /***************************************
 	* Data import methods
