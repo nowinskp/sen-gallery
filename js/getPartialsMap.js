@@ -3,7 +3,10 @@
 	 * GET PARTIALS MAP
 	 * @param  string templatePath - path to where the main template file and partials directory are located
 	 * @param  string templateName - name of the main template file
-	 * @return {[type]}              [description]
+	 * @return partials object:
+	 *         -> partials.template - base template file (used for getPartialsMap())
+	 *         -> partials.map      - partials map to be used as Mustache.js
+	 *                                render() method 3rd param
 	 */
 	sen.getNamespace('sen.helpers').getPartialsMap = function( templatePath, templateName, fileExtension ) {
 
@@ -11,6 +14,7 @@
 		var downloadedPartialFiles = {}
 
 		if ( !fileExtension ) { fileExtension = '.mustache'; }
+		var baseTemplate = templatePath + templateName + fileExtension;
 
 		// trailingslashit
 		templatePath = templatePath.replace(/\/?$/, '/');
@@ -68,7 +72,10 @@
 		   	partialsNamesWithoutRepeats.forEach(function(name, partialIndex){
 		      	partialsMap[name] = partialsStrings[partialIndex];
 		   	});
-		   	return partialsMap;
+		   	return {
+		   		template: downloadedPartialFiles[baseTemplate],
+		   		map: partialsMap
+		   	};
 			});
 		});
 
