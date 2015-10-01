@@ -109,7 +109,7 @@ class Gallery {
 				if (isset($this->images[$image['index']+1])) {
 					return add_var_to_url($key, $image['index']+1, get_current_url()).$galId;
 				}
-				return add_var_to_url($key, 0, get_current_url());
+				return add_var_to_url($key, 0, get_current_url()).$galId;
 			case 'prev':
 				if (isset($this->images[$image['index']-1])) {
 					return add_var_to_url($key, $image['index']-1, get_current_url()).$galId;
