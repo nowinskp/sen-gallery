@@ -18,8 +18,8 @@
 		adFrame: false,
 		pluginPath: '/',
 		templatePath: false,
-		currentImage: 0,
 		loopGallery: false,
+		currentImageIndex: 0,
 	}
 
 	sen.gallery.prototype._init = function() {
@@ -37,7 +37,7 @@
 			parseInt(currentImgUrlParamValue) > 0 &&
 			this.hasImage(currentImgUrlParamValue)
 		) {
-			this.currentImage = currentImgUrlParamValue;
+			this.options.currentImageIndex = currentImgUrlParamValue;
 		}
 	}
 
@@ -87,9 +87,9 @@
 		}
 	}
 
-	sen.gallery.prototype.addGalleryInstance = function(jQueryObject) {
-		if (typeof(this.instances[jQueryObject.selector]) === 'undefined') {
-			this.instances[jQueryObject.selector] = jQueryObject;
+	sen.gallery.prototype.addGalleryInstance = function($DOMobject) {
+		if (typeof(this.instances[$DOMobject.selector]) === 'undefined') {
+			this.instances[$DOMobject.selector] = $DOMobject;
 		}
 		this.loadGalleryEvents();
 	}
@@ -128,8 +128,11 @@
 	}
 
 	sen.gallery.prototype.getCurrentImage = function() {
-		if ( this.currentImage > 0 && this.hasImage(this.currentImage) ) {
-			return this.images[this.currentImage];
+		if (
+			this.options.currentImageIndex > 0 &&
+			this.hasImage(this.options.currentImageIndex)
+		) {
+			return this.images[this.options.currentImageIndex];
 		}
 		return this.images[0];
 	}
@@ -146,26 +149,34 @@
 		if (!this.hasImage(imageIndex)) { return false; }
 		for (var instance in this.instances) {
 		   if (this.instances.hasOwnProperty(instance)) {
-		   	var galleryDiv = this.instances[instance];
-		   	this.markThumbnailOnStrip(imageIndex, galleryDiv);
-				var currentImage = galleryDiv.find('.sen-gal-current-image');
-				currentImage.fadeOut('250', function() {
-		   		var newImage = $(Mustache.render(
-		   			this.currentImageTemplate.template,
-		   			this.images[imageIndex]
-		   		));
-		   		newImage.css('display', 'none');
-					currentImage.replaceWith(newImage[0]);
-					var newCurrentImage = galleryDiv.find('.sen-gal-current-image');
-					newCurrentImage.fadeIn(300);
-				}.bind(this));
+		   	if (imageIndex === this.options.currentImageIndex) { return false; }
+		   	var $galleryDiv = this.instances[instance];
+		   	this.options.currentImageIndex = imageIndex;
+		   	this.markThumbnailOnStrip(imageIndex, $galleryDiv);
+		   	this.replaceCurrentImage(imageIndex, $galleryDiv);
 		   }
 		}
 	}
 
-	sen.gallery.prototype.markThumbnailOnStrip = function(imageIndex, galleryDivObj) {
+	sen.gallery.prototype.replaceCurrentImage = function(imageIndex, $galleryDiv) {
 		if (!this.hasImage(imageIndex)) { return false; }
-		var strip = galleryDivObj.find('.sen-gal-thumbnails-strip');
+		var imageFrame = $galleryDiv.find('.sen-gal-current-image-frame');
+		var currentImage = $galleryDiv.find('.sen-gal-current-image');
+		currentImage.fadeOut(250, function() {
+   		var $newImage = $(Mustache.render(
+   			this.currentImageTemplate.template,
+   			this.images[imageIndex]
+   		));
+   		$newImage.css('display', 'none');
+			currentImage.replaceWith($newImage[0]);
+			var $newCurrentImage = $galleryDiv.find('.sen-gal-current-image');
+			$newCurrentImage.fadeIn(250);
+		}.bind(this));
+	}
+
+	sen.gallery.prototype.markThumbnailOnStrip = function(imageIndex, $galleryDiv) {
+		if (!this.hasImage(imageIndex)) { return false; }
+		var strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
 		strip.find('.sen-gal-image').removeClass('active');
 		strip.find('.sen-gal-image[data-index="'+imageIndex+'"]').addClass('active');
 	}
@@ -182,14 +193,14 @@
 	}
 
 	sen.gallery.prototype.importGalleryDiv = function(selector) {
-		var galleryDiv = $(selector);
+		var $galleryDiv = $(selector);
 		if (
-			galleryDiv.length > 0 &&
+			$galleryDiv.length > 0 &&
 			this.importImagesJSONDataFromDiv(selector+' .sen-gal-images-json-data')
 		) {
-			var galleryOptionsJSON = galleryDiv.data('gallery-options');
+			var galleryOptionsJSON = $galleryDiv.data('gallery-options');
 			this.options = helpers.extend( this.options, galleryOptionsJSON );
-			this.currentImage = galleryDiv.find('.sen-gal-current-image .sen-gal-image').data('index');
+			this.options.currentImageIndex = $galleryDiv.find('.sen-gal-current-image').data('index');
 			this.log('div imported successfully');
 			this.fireCallback('onImportedDiv');
 			return true;
