@@ -6,9 +6,11 @@
 # with WordPress integration.
 #
 # Required libraries:
-# -> Mustache.php (https://github.com/bobthecow/mustache.php)
-# -> Mustache.js  (https://github.com/janl/mustache.js)
-# -> Q.js         (https://github.com/kriskowal/q)
+# -> For PHP version:
+#    * Mustache.php (https://github.com/bobthecow/mustache.php)
+# -> For JS version:
+#    * Mustache.js  (https://github.com/janl/mustache.js)
+#    * Q.js         (https://github.com/kriskowal/q)
 
 
 # SETUP CLASSES AUTOLOADER
