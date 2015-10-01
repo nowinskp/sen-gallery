@@ -193,6 +193,13 @@
 		}
 	}
 
+	sen.gallery.prototype.setGalleryUrlParam = function(key, value) {
+		var urlKey = 'gal-'+this.id+'-'+key;
+		var newUrl = helpers.getURLStringWithModifiedParameter(urlKey, value);
+		window.history.replaceState({}, window.document.title, newUrl);
+	}
+
+
 	/**
 	 * GET ADJACENT IMAGE INDEX
 	 * returns index of next or previous image, related to currently displayed one
@@ -267,6 +274,7 @@
 		   	this.replaceCurrentImage(imageIndex, $galleryDiv);
 		   	this.reloadGalleryCounters($galleryDiv);
 		   	this.reloadGalleryNavButtons($galleryDiv);
+		   	this.setGalleryUrlParam('img', this.getCurrentImageIndex());
 		   	this.fireCallback('onImageChanged', {
 		   		imageIndex: imageIndex,
 		   		instance: instance
