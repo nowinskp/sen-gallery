@@ -100,21 +100,22 @@ class Gallery {
 	 */
 	public function getImageUrl($image, $option = 'gallery') {
 		$key = "gal-{$this->id}-img";
+		$galId = '#sen-gallery-'.$this->id;
 		switch ($option) {
 			case 'direct':
 				return ( isset($image['link']) ) ? $image['link'] : '';
 			case 'gallery':
-				return add_var_to_url($key, $image['index'], get_current_url());
+				return add_var_to_url($key, $image['index'], get_current_url()).$galId;
 			case 'next':
 				if (isset($this->images[$image['index']+1])) {
-					return add_var_to_url($key, $image['index']+1, get_current_url());
+					return add_var_to_url($key, $image['index']+1, get_current_url()).$galId;
 				}
 				return add_var_to_url($key, 0, get_current_url());
 			case 'prev':
 				if (isset($this->images[$image['index']-1])) {
-					return add_var_to_url($key, $image['index']-1, get_current_url());
+					return add_var_to_url($key, $image['index']-1, get_current_url()).$galId;
 				}
-				return add_var_to_url($key, $this->imageCount-1, get_current_url());
+				return add_var_to_url($key, $this->imageCount-1, get_current_url()).$galId;
 		}
 	}
 
@@ -178,11 +179,55 @@ class Gallery {
 		return $output;
 	}
 
+
+	/**
+	 * RENDER IMAGE DIV
+	 * renders div cell with image set as its background
+	 * @param  array/int $image - either image array or image index
+	 * @param  string $format - image size to use
+	 * @return string - html output for img tag
+	 */
+	public function renderImageDiv($image, $format = 'thumbnail') {
+		if (is_int($image)) {
+			if (!isset($this->images[$imageIndex])) {
+				return '';
+			} else {
+				$img = $this->images[$imageIndex];
+			}
+		} else if (is_array($image)) {
+			$img = $image;
+		} else {
+			return '';
+		}
+		if ($format != 'thumbnail') {
+			$format = 'full';
+		}
+		if ($image['index'] == $this->currentImage) {
+			$activeClass = ' active';
+		} else {
+			$activeClass = '';
+		}
+		$output = "<div class=\"sen-gal-image {$format}{$activeClass}\" style=\"background-image: url('{$img['image'][$format]}')\" data-alt=\"{$img['title']}\" data-description=\"{$img['description']}\"></div>";
+		return $output;
+	}
+
+
 	function renderGalleryHeader() {
+		$img = $this->getCurrentImage();
+		$index = $img['index']+1;
 		$output = "
-			<div class=\"sen-gallery-header\">
-				[ ... ]
-			</div>
+			<header class=\"sen-gallery-header\">
+				<div class=\"col-left\">
+					<div class=\"counter\">$index/{$this->imageCount}</div>
+					<h1>{$img['title']}</h1>
+				</div>
+				<div class=\"col-right\">
+					<div class=\"share-buttons\">
+						...
+					</div>
+					<a href=\"#fullscreen\" class=\"sen-gal-fullscreen-btn\">Pełny ekran</a>
+				</div>
+			</header>
 		";
 		return $output;
 	}
@@ -190,14 +235,22 @@ class Gallery {
 
 	function renderCurrentImageFrame() {
 		$img = $this->getCurrentImage();
+		if ($img['description']) {
+			$descriptionHTML = "<div class=\"sen-gallery-current-image-description\">{$img['description']}</div>";
+		} else {
+			$descriptionHTML = '';
+		}
 		$output = "
 			<div class=\"sen-gallery-current-image-frame\">
-				<div class=\"sen-gallery-current-image-frame-buttons\">
-					{$this->getImageLinkTag($img, 'prev')}
-					{$this->getImageLinkTag($img, 'direct')}
-					{$this->getImageLinkTag($img, 'next')}
+				<div class=\"sen-gallery-current-image\">
+					<div class=\"sen-gallery-current-image-frame-buttons\">
+						{$this->getImageLinkTag($img, 'prev')}
+						{$this->getImageLinkTag($img, 'direct')}
+						{$this->getImageLinkTag($img, 'next')}
+					</div>
+					{$this->renderImageDiv($img, 'full')}
 				</div>
-				{$this->renderImage($img, 'full')}
+				$descriptionHTML
 			</div>
 		";
 		return $output;
@@ -211,10 +264,10 @@ class Gallery {
 		if (!$this->options['showThumbs']) {
 			return '';
 		}
-		$output = '<div class="gallery-thumbnails">';
+		$output = '<div class="sen-gallery-thumbnails">';
 		foreach ($this->images as $image) {
 			$output .= "<a href=\"{$this->getImageUrl($image, 'gallery')}\">";
-			$output .= $this->renderImage($image, 'thumbnail');
+			$output .= $this->renderImageDiv($image, 'thumbnail');
 			$output .= "</a>";
 		}
 		$output .= '</div>';
@@ -223,7 +276,7 @@ class Gallery {
 
 	public function renderGallery() {
 		$output = '
-			<div id="gallery-'.$this->id.'" class="sen-gallery no-js" data-gallery-options="'.htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8').'">';
+			<div id="sen-gallery-'.$this->id.'" class="sen-gallery no-js" data-gallery-options="'.htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8').'">';
 		$output .= $this->renderGalleryHeader();
 		$output .= $this->renderCurrentImageFrame();
 		$output .= $this->renderThumbnailsStrip();
