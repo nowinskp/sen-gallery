@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
 	var concatSrc = [
+		'js/getPartialsMap.js',
 		'js/sen-gallery.js',
 	];
 
