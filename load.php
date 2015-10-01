@@ -33,8 +33,16 @@ spl_autoload_register(function($className){
 # ------------------------------------------
 add_filter( 'post_gallery', 'sen_galleries_getWPGalleryCode', 10, 2 );
 function sen_galleries_getWPGalleryCode( $output, $attr ) {
-	$code = new sen\galleries\WPGalleryOutput();
-	return $code->getOutput($output, $attr);
+	$WPGalleryOutput = new sen\galleries\WPGalleryOutput();
+	$galleryDataArray = $WPGalleryOutput->getOutput($output, $attr);
+
+	if ($galleryDataArray) {
+		$gallery = new sen\galleries\Gallery(
+			$galleryDataArray['images'],
+			$galleryDataArray['options']
+		);
+		return $gallery->renderHTML();
+	}
 }
 
 
