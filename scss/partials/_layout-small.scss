@@ -191,14 +191,14 @@
 				}
 				&:hover {
 					cursor: pointer;
-					.sen-gal-move-strip-right {
+					.sen-gal-move-strip-right:not(.hidden) {
 						@include translateX(0);
 					}
-					.sen-gal-move-strip-left {
+					.sen-gal-move-strip-left:not(.hidden) {
 						@include translateX(0);
 					}
-					.sen-gal-move-strip-right:hover,
-					.sen-gal-move-strip-left:hover {
+					.sen-gal-move-strip-right:not(.hidden):hover,
+					.sen-gal-move-strip-left:not(.hidden):hover {
 						width: rem-calc(80);
 					}
 				}

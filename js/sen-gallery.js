@@ -157,8 +157,16 @@
 					event.preventDefault();
 					this.moveStrip($galleryDiv, this.options.stripScrollStepSize);
 				}.bind(this));
+				// WINDOW RESIZE ACTION
 				$(window).resize(function(event) {
-					this.reloadStripNavVisibility($galleryDiv);
+					if (this.options.showThumbs) {
+						var stripMoveParams = this.calculateStripMoveParams($galleryDiv);
+						if (Math.abs(stripMoveParams.currentMargin) > stripMoveParams.maxDistance) {
+							var newDistance = Math.abs(stripMoveParams.currentMargin) - stripMoveParams.maxDistance;
+							this.moveStrip($galleryDiv, newDistance);
+						}
+						this.reloadStripNavVisibility($galleryDiv, stripMoveParams);
+					}
 				}.bind(this));
 		   }
 		}
@@ -294,8 +302,10 @@
 		   if (this.instances.hasOwnProperty(instance)) {
 		   	var $galleryDiv = this.instances[instance];
 		   	this.currentImageIndex = imageIndex;
-		   	this.markThumbnailOnStrip(imageIndex, $galleryDiv);
-		   	this.centerStripOnThumb(imageIndex, $galleryDiv);
+		   	if (this.options.showThumbs) {
+		   		this.markThumbnailOnStrip(imageIndex, $galleryDiv);
+		   		this.centerStripOnThumb(imageIndex, $galleryDiv);
+		   	}
 		   	this.setCurrentImageDescription(this.images[imageIndex].description, $galleryDiv);
 		   	this.setCurrentImageTitle(this.images[imageIndex].title, $galleryDiv);
 		   	this.replaceCurrentImage(imageIndex, $galleryDiv);
@@ -482,6 +492,19 @@
 		return width*count;
 	}
 
+	sen.gallery.prototype.calculateStripMoveParams = function($galleryDiv) {
+		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
+		var $container = $galleryDiv.find('.sen-gal-thumbnails');
+		var currentMargin = helpers.convertPxValue($strip.css('margin-left'), 'float');
+		var containerWidth = helpers.convertPxValue($container.outerWidth(), 'float');
+		var stripWidth = helpers.convertPxValue($strip.outerWidth(), 'float');
+		var maxDistance = stripWidth - containerWidth;
+		return {
+			currentMargin: currentMargin,
+			maxDistance: maxDistance
+		}
+	}
+
 	sen.gallery.prototype.prepareThumbnailStrip = function($galleryDiv) {
 		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
 		var $container = $galleryDiv.find('.sen-gal-thumbnails');
@@ -490,53 +513,58 @@
 			$strip.css('margin-left', 0);
 		}
 		$strip.width(stripWidth);
-		this.reloadStripNavVisibility($galleryDiv);
+		this.centerStripOnThumb(this.getCurrentImageIndex(), $galleryDiv);
 	}
 
-	sen.gallery.prototype.reloadStripNavVisibility = function($galleryDiv) {
-		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
-		var $container = $galleryDiv.find('.sen-gal-thumbnails');
-		var containerWidth = helpers.convertPxValue($container.outerWidth(), 'float');
-		var stripWidth = helpers.convertPxValue($strip.outerWidth(), 'float');
-		if (stripWidth < containerWidth) {
-			$galleryDiv.find('.sen-gal-thumbnails .sen-gal-btn').hide();
+	sen.gallery.prototype.reloadStripNavVisibility = function($galleryDiv, finalParams) {
+		var btnRight = $galleryDiv.find('.sen-gal-thumbnails .sen-gal-move-strip-left');
+		var btnLeft = $galleryDiv.find('.sen-gal-thumbnails .sen-gal-move-strip-right');
+		// button - move strip right
+		if (
+			finalParams.maxDistance > 0 &&
+			Math.abs(finalParams.currentMargin) < finalParams.maxDistance
+		) {
+			btnRight.removeClass('hidden');
 		} else {
-			$galleryDiv.find('.sen-gal-thumbnails .sen-gal-btn').show();
+			btnRight.addClass('hidden');
+		}
+		// button - move strip left
+		if (finalParams.currentMargin < 0) {
+			btnLeft.removeClass('hidden');
+		} else {
+			btnLeft.addClass('hidden');
 		}
 	}
 
 	sen.gallery.prototype.moveStrip = function($galleryDiv, distance) {
 		var $strip = $galleryDiv.find('.sen-gal-thumbnails-strip');
-		var $container = $galleryDiv.find('.sen-gal-thumbnails');
+		var stripParams = this.calculateStripMoveParams($galleryDiv);
 		distance = helpers.convertPxValue(distance, 'float');
-		var currentMargin = helpers.convertPxValue($strip.css('margin-left'), 'float');
+		var newDistance = stripParams.currentMargin;
 		// moving strip left
 		if (distance < 0) {
-			var containerWidth = helpers.convertPxValue($container.outerWidth(), 'float');
-			var stripWidth = helpers.convertPxValue($strip.outerWidth(), 'float');
-			var maxDistance = stripWidth - containerWidth;
-			// console.log('currentMargin: ' + currentMargin);
-			// console.log('containerWidth: ' + containerWidth);
-			// console.log('stripWidth: ' + stripWidth);
-			// console.log('distance: ' + distance);
-			// console.log('maxDistance: ' + maxDistance);
-			if (maxDistance > 0 && Math.abs(currentMargin) < maxDistance) {
-				if (Math.abs(currentMargin + distance) <= maxDistance) {
-					$strip.css('margin-left', currentMargin + distance);
+			if (stripParams.maxDistance > 0 && Math.abs(stripParams.currentMargin) < stripParams.maxDistance) {
+				if (Math.abs(stripParams.currentMargin + distance) <= stripParams.maxDistance) {
+					newDistance = stripParams.currentMargin + distance;
 				} else {
-					$strip.css('margin-left', -maxDistance);
+					newDistance = -stripParams.maxDistance;
 				}
 			}
 		// moving strip right
 		} else if (distance > 0) {
-			if (currentMargin < 0 ) {
-				if (Math.abs(currentMargin) >= distance) {
-					$strip.css('margin-left', currentMargin + distance);
+			if (stripParams.currentMargin < 0 ) {
+				if (Math.abs(stripParams.currentMargin) >= distance) {
+					newDistance = stripParams.currentMargin + distance;
 				} else {
-					$strip.css('margin-left', 0);
+					newDistance = 0;
 				}
 			}
 		}
+		$strip.css('margin-left', newDistance);
+		this.reloadStripNavVisibility($galleryDiv, {
+			maxDistance: stripParams.maxDistance,
+			currentMargin: newDistance
+		});
 	}
 
 
