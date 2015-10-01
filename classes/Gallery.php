@@ -58,11 +58,26 @@ class Gallery {
 	}
 
 
+	public function getImageLink($image, $option = 'direct') {
+		# direct link
+		if ($option == 'direct' && $image['link']) {
+			return "<a class=\"sen-gal-btn sen-gal-image-link\" href=\"{$image['link']}\">Wyświetl obraz</a>";
+		}
+
+		# prev/next link
+		if (in_array($option, ['next', 'prev']) ) {
+			// ====================================
+			// TO DO NEXT ...
+			// ====================================
+		}
+	}
+
+
 	/**
 	 * RENDER IMAGE
 	 * @param  array/int $image - either image array or image index
 	 * @param  string $format - image size to use
-	 * @return string - html output
+	 * @return string - html output for img tag
 	 */
 	public function renderImage($image, $format = 'thumbnail') {
 		if (is_int($image)) {
@@ -79,14 +94,23 @@ class Gallery {
 		if ($format != 'thumbnail') {
 			$format = 'full';
 		}
+		$output = "<img class=\"sen-gal-image\" src=\"{$img['image'][$format]}\" alt=\"{$img['title']}\" data-description=\"{$img['description']}\">";
+		return $output;
+	}
+
+
+	function renderCurrentImageFrame() {
+		$img = $this->getCurrentImage();
 		$output = "
-			<div class=\"sen-gal-image-container\" href=\"{$img['link']}\">
-				<img class=\"sen-gal-image\" src=\"{$img['image'][$format]}\" alt=\"{$img['title']}\" data-description=\"{$img['description']}\">
+			<div class=\"sen-gallery-current-image-frame\">
+				<div class=\"sen-gallery-current-image-frame-buttons\">
+					{$this->getImageLink($img, 'previous')}
+					{$this->getImageLink($img, 'direct')}
+					{$this->getImageLink($img, 'next')}
+				</div>
+				{$this->renderImage($img, 'full')}
 			</div>
 		";
-		if ($img['link']) {
-			$output = "<a class=\"sen-gal-image-link\" href=\"{$img['link']}\">{$output}</a>";
-		}
 		return $output;
 	}
 
@@ -109,7 +133,7 @@ class Gallery {
 	public function renderGallery() {
 		$output = '
 			<div id="gallery-'.$this->id.'" class="sen-gallery no-js" data-gallery-options="'.htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8').'">';
-		$output .= '<div class="sen-gallery-display-image">'.$this->renderImage($this->getCurrentImage(), 'full').'</div>';
+		$output .= $this->renderCurrentImageFrame();
 		$output .= $this->renderThumbnailsStrip();
 		$output .= '</div>';
 		return $output;
