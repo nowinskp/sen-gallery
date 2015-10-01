@@ -1,0 +1,36 @@
+.sen-gallery {
+	font-family: $text-font-family;
+	a {
+		color: #fff;
+		text-decoration: none;
+	}
+	header.sen-gallery-header {
+		background: #111;
+		color: #fff;
+		h1 {
+			font-family: $header-font-family;
+		}
+		.counter {
+			color: #999;
+		}
+	}
+
+	.sen-gal-image {
+		width: 100%;
+		padding-bottom: 75%;
+		background-position: center center;
+		@include background-size(contain);
+		background-repeat: no-repeat;
+		@include transition(all, 250ms);
+		&.thumbnail {
+			@include background-size(cover);
+			border: rem-calc(4) solid #333;
+			&.active {
+				border-color: $color-accent;
+			}
+			&:hover:not(.active) {
+				border-color: #fff;
+			}
+		}
+	}
+}
