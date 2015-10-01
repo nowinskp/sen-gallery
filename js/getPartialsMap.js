@@ -8,16 +8,28 @@
 	sen.getNamespace('sen.helpers').getPartialsMap = function( templatePath, templateName, fileExtension ) {
 
 		var partialsNamesWithoutRepeats = [];
+		var downloadedPartialFiles = {}
 
 		if ( !fileExtension ) { fileExtension = '.mustache'; }
 
 		// trailingslashit
 		templatePath = templatePath.replace(/\/?$/, '/');
-		
-		function parsePartial( templatePath, templateName ) {
+
+		function getPartialFile( path ) {
 			return Q.fcall(function(){
-					return $.get( templatePath + templateName + fileExtension );
-				}).then(function(template){
+				if ( downloadedPartialFiles[path] === undefined ) {
+					return $.get( path ).then(function(partialFile){
+						downloadedPartialFiles[path] = partialFile;
+						return partialFile;
+					});
+				} else {
+					return downloadedPartialFiles[path];
+				}
+			});
+		}
+
+		function parsePartial( templatePath, templateName ) {
+			return getPartialFile(templatePath + templateName + fileExtension).then(function(template){
 					var nextPartialsToParse = [];
 					var parsedTemplate = Mustache.parse(template);
 					var onlyPartialNames = [];
@@ -47,7 +59,7 @@
 
 		return parsePartial( templatePath, templateName ).then(function() {
 			var partialsRequests = partialsNamesWithoutRepeats.map(function(partialName){
-				return $.get( templatePath + partialName + fileExtension );
+				return getPartialFile( templatePath + partialName + fileExtension );
 			});
 
 			var partialsMap = {};
