@@ -8,6 +8,7 @@
 		this.id = id;
 		this.images = [];
 		this.instances = {};
+		this.currentImageIndex = 0;
 		this.currentImageTemplate = {};
 		this._init();
 	}
@@ -18,8 +19,8 @@
 		adFrame: false,
 		pluginPath: '/',
 		templatePath: false,
-		loopGallery: false,
-		currentImageIndex: 0,
+		loopGallery: true,
+		firstImageIndex: false,
 	}
 
 	sen.gallery.prototype._init = function() {
@@ -37,7 +38,12 @@
 			parseInt(currentImgUrlParamValue) > 0 &&
 			this.hasImage(currentImgUrlParamValue)
 		) {
-			this.options.currentImageIndex = currentImgUrlParamValue;
+			this.currentImageIndex = currentImgUrlParamValue;
+		} else if (
+			this.options.firstImageIndex !== false &&
+			this.hasImage(this.options.firstImageIndex)
+		) {
+			this.currentImageIndex = this.options.firstImageIndex;
 		}
 	}
 
@@ -98,6 +104,9 @@
 		for (var instance in this.instances) {
 		   if (this.instances.hasOwnProperty(instance)) {
 				var galleryDiv = this.instances[instance];
+				galleryDiv.on('click', '.sen-gal-thumbnails-strip', function(event) {
+					event.preventDefault();
+				});
 				galleryDiv.on('click', '.thumbnail', function(event, element) {
 					event.preventDefault();
 					var thumbId = event.currentTarget.dataset.index;
@@ -129,16 +138,63 @@
 
 	sen.gallery.prototype.getCurrentImage = function() {
 		if (
-			this.options.currentImageIndex > 0 &&
-			this.hasImage(this.options.currentImageIndex)
+			this.getCurrentImageIndex() > 0 &&
+			this.hasImage(this.getCurrentImageIndex())
 		) {
-			return this.images[this.options.currentImageIndex];
+			return this.images[this.getCurrentImageIndex()];
 		}
 		return this.images[0];
 	}
 
 	sen.gallery.prototype.getCurrentImageNumber = function() {
 		return this.getCurrentImage().index + 1;
+	}
+
+	sen.gallery.prototype.getCurrentImageIndex = function() {
+		return parseInt(this.currentImageIndex);
+	}
+
+	sen.gallery.prototype.reloadGalleryCounters = function($galleryDiv) {
+		$galleryDiv
+			.find('.sen-gal-current-image-number')
+			.text(this.getCurrentImageNumber());
+		$galleryDiv
+			.find('.sen-gal-total-image-count')
+			.text(this.images.length);
+	}
+
+	/**
+	 * GET ADJACENT IMAGE INDEX
+	 * returns index of next or previous image, related to currently displayed one
+	 * @param  string direction - either 'next' or 'prev'
+	 * @return mixed - int   - image index if image exists OR
+	 *                 false - if image does not exist
+	 */
+	sen.gallery.prototype.getAdjacentImageIndex = function(direction) {
+		var newIndex;
+		if (direction == 'next') {
+			newIndex = this.getCurrentImageIndex() + 1;
+			if (this.hasImage(newIndex)) {
+				return newIndex;
+			} else if (
+				this.options.loopGallery === true &&
+				this.images.length > 1) {
+				return 0;
+			} else {
+				return false;
+			}
+		} else {
+			newIndex = this.getCurrentImageIndex() - 1;
+			if (this.hasImage(newIndex)) {
+				return newIndex;
+			} else if (
+				this.options.loopGallery === true &&
+				this.images.length > 1) {
+				return this.images.length - 1;
+			} else {
+				return false;
+			}
+		}
 	}
 
 	sen.gallery.prototype.hasImage = function(imageIndex) {
@@ -149,12 +205,13 @@
 		if (!this.hasImage(imageIndex)) { return false; }
 		for (var instance in this.instances) {
 		   if (this.instances.hasOwnProperty(instance)) {
-		   	if (imageIndex === this.options.currentImageIndex) { return false; }
+		   	if (imageIndex === this.getCurrentImageIndex()) { return false; }
 		   	var $galleryDiv = this.instances[instance];
-		   	this.options.currentImageIndex = imageIndex;
+		   	this.currentImageIndex = imageIndex;
 		   	this.markThumbnailOnStrip(imageIndex, $galleryDiv);
 		   	this.setCurrentImageDescription(this.images[imageIndex].description, $galleryDiv);
 		   	this.replaceCurrentImage(imageIndex, $galleryDiv);
+		   	this.reloadGalleryCounters($galleryDiv);
 		   }
 		}
 	}
@@ -166,7 +223,6 @@
 				$descDiv.html('<span>' + description + '</span>').slideDown(500);
 			}
 		});
-
 	}
 
 	sen.gallery.prototype.replaceCurrentImage = function(imageIndex, $galleryDiv) {
@@ -213,7 +269,7 @@
 		) {
 			var galleryOptionsJSON = $galleryDiv.data('gallery-options');
 			this.options = helpers.extend( this.options, galleryOptionsJSON );
-			this.options.currentImageIndex = $galleryDiv.find('.sen-gal-current-image').data('index');
+			this.currentImageIndex = $galleryDiv.find('.sen-gal-current-image').data('index');
 			this.log('div imported successfully');
 			this.fireCallback('onImportedDiv');
 			return true;
