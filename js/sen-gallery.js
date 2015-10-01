@@ -153,25 +153,38 @@
 		   	var $galleryDiv = this.instances[instance];
 		   	this.options.currentImageIndex = imageIndex;
 		   	this.markThumbnailOnStrip(imageIndex, $galleryDiv);
+		   	this.setCurrentImageDescription(this.images[imageIndex].description, $galleryDiv);
 		   	this.replaceCurrentImage(imageIndex, $galleryDiv);
 		   }
 		}
+	}
+
+	sen.gallery.prototype.setCurrentImageDescription = function(description, $galleryDiv) {
+		var $descDiv = $galleryDiv.find('.sen-gal-current-image-description');
+		$descDiv.slideUp(500, function() {
+			if (description.length > 0) {
+				$descDiv.html('<span>' + description + '</span>').slideDown(500);
+			}
+		});
+
 	}
 
 	sen.gallery.prototype.replaceCurrentImage = function(imageIndex, $galleryDiv) {
 		if (!this.hasImage(imageIndex)) { return false; }
 		var imageFrame = $galleryDiv.find('.sen-gal-current-image-frame');
 		var currentImage = $galleryDiv.find('.sen-gal-current-image');
-		currentImage.fadeOut(250, function() {
-   		var $newImage = $(Mustache.render(
-   			this.currentImageTemplate.template,
-   			this.images[imageIndex]
-   		));
-   		$newImage.css('display', 'none');
+		imageFrame.addClass('exchanging');
+		setTimeout(function(){
+			var $newImage = $(Mustache.render(
+				this.currentImageTemplate.template,
+				this.images[imageIndex]
+			));
 			currentImage.replaceWith($newImage[0]);
 			var $newCurrentImage = $galleryDiv.find('.sen-gal-current-image');
-			$newCurrentImage.fadeIn(250);
-		}.bind(this));
+			setTimeout(function(){
+				imageFrame.removeClass('exchanging');
+			}, 100);
+		}.bind(this), 500);
 	}
 
 	sen.gallery.prototype.markThumbnailOnStrip = function(imageIndex, $galleryDiv) {
