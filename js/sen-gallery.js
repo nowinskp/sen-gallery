@@ -2,7 +2,9 @@
 
 	'use strict';
 
-	sen.getNamespace('sen').gallery = function ( id, options ) {
+	var SG_GLOBAL_inFullscreenMode = false;
+
+	sen.getNamespace('sen').gallery = function( id, options ) {
 		this.options = helpers.extend( {}, this.options );
 		helpers.extend( this.options, options );
 		this.id = id;
@@ -11,6 +13,8 @@
 		this.currentImageIndex = 0;
 		this.currentImageTemplate = {};
 		this.duringImageExchange = false;
+		this.fullscreenTemplate = null;
+		this.inFullscreenMode = false;
 		this._init();
 	}
 
@@ -20,6 +24,7 @@
 		adFrame: false,
 		pluginPath: '/',
 		templatePath: false,
+		loadDefaultFullscreenTemplate: true,
 		loopGallery: true,
 		firstImageIndex: false,
 		stripScrollStepSize: 300,
@@ -81,6 +86,9 @@
 		}
 		this.registerCallbacks();
 		this.registerCustomContent();
+		if (this.options.loadDefaultFullscreenTemplate === true) {
+			this.loadFullscreenTemplate('fullscreen');
+		}
 	}
 
 
@@ -214,6 +222,15 @@
 				$galleryDiv.on('click', this.selectors.btnMoveStripRight, function(event) {
 					event.preventDefault();
 					this.moveStrip($galleryDiv, this.options.stripScrollStepSize);
+				}.bind(this));
+				// FULLSCREEN CONTROL BUTTONS
+				$galleryDiv.on('click', this.selectors.btnFullscreenMode, function(event) {
+					event.preventDefault();
+					this.displayFullscreen();
+				}.bind(this));
+				$galleryDiv.on('click', this.selectors.btnCloseFullscreen, function(event) {
+					event.preventDefault();
+					this.closeFullscreen();
 				}.bind(this));
 				// WINDOW RESIZE ACTION
 				$(window).resize(function(event) {
@@ -437,7 +454,7 @@
 	sen.gallery.prototype.renderGallery = function(selector, templateName) {
 		var $galleryPlaceholder = $(selector);
 		if ($galleryPlaceholder.length <= 0) { return false; }
-		Q
+		return Q
 			.fcall(function(){ return this.getTemplateHTML(templateName); }.bind(this))
 			.then(function(renderedGallery){
 				$galleryPlaceholder.replaceWith(renderedGallery);
@@ -626,6 +643,47 @@
 			maxDistance: stripParams.maxDistance,
 			currentMargin: newDistance
 		});
+	}
+
+
+/***************************************
+	* Fullscreen methods
+	* --------------------------------- */
+
+	sen.gallery.prototype.loadFullscreenTemplate = function(templateName, placeholderID) {
+		if (typeof(placeholderID) === 'undefined') {
+			$('body').append('<div id="sen-gallery-'+this.id+'-fullscreen-placeholder" class="sen-gallery-fullscreen-frame" style="display:none;"></div>');
+			placeholderID = '#sen-gallery-'+this.id+'-fullscreen-placeholder';
+		}
+		Q
+			.fcall(function(){
+				return this.renderGallery(placeholderID, templateName);
+			}.bind(this)).then(function(result){
+				this.log('fullscreen template loaded');
+				this.fullscreenTemplate = $('#sen-gallery-'+this.id+'-fullscreen');
+			}.bind(this));
+	}
+
+	sen.gallery.prototype.displayFullscreen = function() {
+		if (
+			this.fullscreenTemplate.length <= 0
+			|| SG_GLOBAL_inFullscreenMode === true
+		) { return false; }
+		this.log('opening fullscreen mode');
+		this.fullscreenTemplate.show();
+		this.inFullscreenMode = true;
+		SG_GLOBAL_inFullscreenMode = true;
+	}
+
+	sen.gallery.prototype.closeFullscreen = function() {
+		this.log('closing fullscreen mode');
+		if (
+			this.fullscreenTemplate.length <= 0
+			|| SG_GLOBAL_inFullscreenMode === false
+		) { return false; }
+		this.fullscreenTemplate.hide();
+		this.inFullscreenMode = false;
+		SG_GLOBAL_inFullscreenMode = false;
 	}
 
 
