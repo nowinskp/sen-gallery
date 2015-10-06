@@ -25,6 +25,14 @@
 		stripScrollStepSize: 300,
 	}
 
+	sen.gallery.prototype.labels = {
+		nextImage: 'Next image',
+		prevImage: 'Previous image',
+		displayImage: 'Display image',
+		showFullscreen: 'Fullscreen mode',
+		closeFullscreen: 'Close fullscreen mode',
+	}
+
 	sen.gallery.prototype.selectors = {
 		btnMoveStripLeft:        '.SGE_btnMoveStripLeft',
 		btnMoveStripRight:       '.SGE_btnMoveStripRight',
@@ -468,7 +476,8 @@
 						},
 						custom: this.getCustomContent(templateName),
 						'current-image': currentImageArray,
-						images: this.images
+						images: this.images,
+						labels: this.labels
 					},
 					parsedObj.map
 				);

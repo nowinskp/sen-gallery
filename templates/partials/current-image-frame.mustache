@@ -3,15 +3,15 @@
 	<div class="sen-gal-current-image-buttons">
 		{{# link.prev }}
 			<a class="sen-gal-btn sen-gal-image-link-prev SGE_btnPrevImage"
-				href="{{ link.prev }}">Poprzedni</a>
+				href="{{ link.prev }}">{{ labels.prevImage }}</a>
 		{{/ link.prev }}
 		{{# link.direct }}
 			<a	class="sen-gal-btn sen-gal-image-link-direct"
-				href="{{ link.direct }}">Wyświetl obraz</a>
+				href="{{ link.direct }}">{{ labels.displayImage }}</a>
 		{{/ link.direct }}
 		{{# link.next }}
 			<a class="sen-gal-btn sen-gal-image-link-next SGE_btnNextImage"
-				href="{{ link.next }}">Następny</a>
+				href="{{ link.next }}">{{ labels.nextImage }}</a>
 		{{/ link.next }}
 	</div>
 	{{> partials/current-image }}
