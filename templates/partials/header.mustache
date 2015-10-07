@@ -9,6 +9,8 @@
 	</div>
 	<div class="sen-gal-col-right">
 		{{{ custom.headerMenu }}}
-		<a href="#fullscreen" class="sen-gal-btn-fullscreen SGE_btnFullscreenMode">{{ labels.showFullscreen }}</a>
+		{{# gallery.allow-fullscreen }}
+		<a href="#fullscreen" class="sen-gal-btn-fullscreen SGE_btnFullscreenMode" display:>{{ labels.showFullscreen }}</a>
+		{{/ gallery.allow-fullscreen }}
 	</div>
 </header>

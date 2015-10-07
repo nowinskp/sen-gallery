@@ -20,6 +20,7 @@
 
 	sen.gallery.prototype.options = {
 		debugMode: false,
+		allowFullscreen: true,
 		showThumbs: true,
 		adFrame: false,
 		pluginPath: '/',
@@ -86,7 +87,10 @@
 		}
 		this.registerCallbacks();
 		this.registerCustomContent();
-		if (this.options.loadDefaultFullscreenTemplate === true) {
+		if (
+			this.options.allowFullscreen === true &&
+			this.options.loadDefaultFullscreenTemplate === true
+		) {
 			this.loadFullscreenTemplate('fullscreen');
 		}
 	}
@@ -489,7 +493,8 @@
 							js: 'js',
 							'total-image-count': this.images.length,
 							'current-image-number': this.getCurrentImageNumber(),
-							'show-thumbs': this.options.showThumbs
+							'show-thumbs': this.options.showThumbs,
+							'allow-fullscreen': this.options.allowFullscreen
 						},
 						custom: this.getCustomContent(templateName),
 						'current-image': currentImageArray,
@@ -662,6 +667,13 @@
 				this.log('fullscreen template loaded');
 				this.fullscreenTemplate = $('#sen-gallery-'+this.id+'-fullscreen');
 			}.bind(this));
+	}
+
+	sen.gallery.prototype.isFullscreenTemplateLoaded = function() {
+		if (this.fullscreenTemplate.length > 0) {
+			return true;
+		}
+		return false;
 	}
 
 	sen.gallery.prototype.displayFullscreen = function() {
