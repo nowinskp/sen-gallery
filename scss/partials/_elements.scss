@@ -51,4 +51,18 @@
 		text-indent: rem-calc(-99999);
 		margin: rem-calc(9);
 	}
+
+	// FULLSCREEN ELEMENTS
+	.sen-gal-fullscreen-btn-close-fullscreen {
+		display: inline-block;
+		background-image: url('../img/icon-close.png');
+		background-repeat: no-repeat;
+		background-position: right center;
+		@include background-size(contain);
+		padding-right: rem-calc(32);
+		color: #999;
+		&:hover {
+			cursor: pointer;
+		}
+	}
 }

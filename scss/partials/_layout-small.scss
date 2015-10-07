@@ -224,15 +224,24 @@
 				height: 100%;
 				z-index: 99999;
 				@include clearfix;
-				.sen-gallery-fullscreen-topbar {
+				.sen-gal-fullscreen-topbar {
+					position: relative;
 					width: 100%;
 					background: #fff;
+					height: rem-calc(60);
+					.sen-gal-fullscreen-btn-close-fullscreen {
+						position: absolute;
+						top: rem-calc(20);
+						right: rem-calc(20);
+					}
 				}
-				.sen-gallery-fullscreen-main-content {
-					
-				}
-				.sen-gallery-fullscreen-sidebar {
-					float: right;
+				.sen-gal-fullscreen-content-frame {
+					.sen-gal-fullscreen-main-content {
+						
+					}
+					.sen-gal-fullscreen-sidebar {
+						float: right;
+					}
 				}
 			}
 		}

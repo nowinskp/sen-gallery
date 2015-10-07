@@ -246,6 +246,13 @@
 						}
 						this.reloadStripNavVisibility($galleryDiv, stripMoveParams);
 					}
+					if (
+						this.options.allowFullscreen === true &&
+						this.options.loadDefaultFullscreenTemplate === true &&
+						this.inFullscreenMode === true
+					) {
+						this.updateFullscreenFrameSizes();
+					}
 				}.bind(this));
 		   }
 		}
@@ -682,6 +689,9 @@
 			|| SG_GLOBAL_inFullscreenMode === true
 		) { return false; }
 		this.log('opening fullscreen mode');
+		if (this.options.loadDefaultFullscreenTemplate === true) {
+			this.updateFullscreenFrameSizes();
+		};
 		this.fullscreenTemplate.show();
 		this.inFullscreenMode = true;
 		SG_GLOBAL_inFullscreenMode = true;
@@ -698,6 +708,22 @@
 		SG_GLOBAL_inFullscreenMode = false;
 	}
 
+	sen.gallery.prototype.updateFullscreenFrameSizes = function() {
+		this.log('updating fullscreen frame sizes');
+
+		var viewportWidth = window.innerWidth;
+		var viewportHeight = window.innerHeight;
+		var contentFrame = this.fullscreenTemplate.find('.sen-gal-fullscreen-content-frame');
+		var topbar = this.fullscreenTemplate.find('.sen-gal-fullscreen-topbar');
+		var topbarHeight = topbar.outerHeight();
+
+		contentFrame.css('width', viewportWidth);
+		contentFrame.css('height', viewportHeight - topbarHeight);
+
+		var imageFrame = contentFrame.find('.sen-gal-current-image-frame');
+		var thumbnailStrip = contentFrame.find('.sen-gal-thumbnails');
+
+	}
 
 	window.sen.gallery = sen.gallery;
 

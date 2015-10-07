@@ -4,29 +4,31 @@
 	data-gallery-id="{{ gallery.id }}"
 	data-gallery-options="{{{ gallery.options }}}" style="display: none;">
 	{{! TOP BAR }}
-	<div class="sen-gallery-fullscreen-topbar">
+	<div class="sen-gal-fullscreen-topbar">
 		{{{ custom.topbarLogo }}}
-		<span class="SGE_btnCloseFullscreen">{{ labels.closeFullscreen }}</span>
+		<span class="sen-gal-fullscreen-btn-close-fullscreen SGE_btnCloseFullscreen">{{ labels.closeFullscreen }}</span>
 	</div>
-	{{! MAIN CONTENT }}
-	<div class="sen-gallery-fullscreen-main-content">
-		{{> partials/current-image-frame }}
-		{{> partials/thumbnail-strip }}
-	</div>
-	{{! SIDEBAR }}
-	<div class="sen-gallery-fullscreen-sidebar">
-		<div class="sen-gallery-sidebar-content">
-			<header class="sen-gal-header">
-				{{{ custom.headerMenu }}}
-				<div class="sen-gal-counter">
-					<span class="SGE_currentImageNumber">{{ gallery.current-image-number }}</span>/<span class="SGE_totalImageCount">{{ gallery.total-image-count }}</span>
-				</div>
-				<h1 class="sen-gal-current-image-title SGE_currentImageTitle">
-					<span>{{ current-image.title }}</span>
-				</h1>
-			</header>
-			{{> partials/description }}
+	<div class="sen-gal-fullscreen-content-frame">
+		{{! MAIN CONTENT }}
+		<div class="sen-gal-fullscreen-main-content">
+			{{> partials/current-image-frame }}
+			{{> partials/thumbnail-strip }}
 		</div>
-		{{{ custom.afterSidebarContent }}}
+		{{! SIDEBAR }}
+		<div class="sen-gal-fullscreen-sidebar">
+			<div class="sen-gal-sidebar-content">
+				<header class="sen-gal-header">
+					{{{ custom.headerMenu }}}
+					<div class="sen-gal-counter">
+						<span class="SGE_currentImageNumber">{{ gallery.current-image-number }}</span>/<span class="SGE_totalImageCount">{{ gallery.total-image-count }}</span>
+					</div>
+					<h1 class="sen-gal-current-image-title SGE_currentImageTitle">
+						<span>{{ current-image.title }}</span>
+					</h1>
+				</header>
+				{{> partials/description }}
+			</div>
+			{{{ custom.afterSidebarContent }}}
+		</div>
 	</div>
 </div>
