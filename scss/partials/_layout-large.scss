@@ -1,6 +1,42 @@
 // TABLETS - LANDSCAPE & OLD DESKTOPS
 // **********************************************
 @media #{$large-up} {
-	
+	.sen-gallery {
+		&.js {
+			&.sen-gallery-fullscreen {
+				.sen-gal-fullscreen-topbar {
+					.sen-gal-fullscreen-btn-close-fullscreen {
+					}
+				}
+				.sen-gal-fullscreen-content-frame {
+					.sen-gal-fullscreen-main-content {
+						.sen-gal-current-image-frame{
+							.sen-gal-image {
+							}
+						}
+						.sen-gal-thumbnails {
+						}
+					}
+					.sen-gal-fullscreen-sidebar {
+						left: auto;
+						bottom: auto;
+						top: 0;
+						right: 0;
+						.sen-gal-image-meta {
+							.sen-gal-header {
+							}
+							.sen-gal-current-image-description {
+								span {
+								}
+							}
+						}
+						.sen-gal-sidebar-custom-content {
+							display: block;
+						}
+					}
+				}
+			}
+		}
+	}
 }
-@media #{$large-only} { }
+@media #{$large-only} {}

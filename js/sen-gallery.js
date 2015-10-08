@@ -47,6 +47,7 @@
 		btnPrevImage:            '.SGE_btnPrevImage',
 		btnFullscreenMode:       '.SGE_btnFullscreenMode',
 		btnCloseFullscreen:      '.SGE_btnCloseFullscreen',
+		btnToggleSidebar:        '.SGE_btnToggleSidebar',
 		currentImage:            '.SGE_currentImage',
 		currentImageDescription: '.SGE_currentImageDescription',
 		currentImageFrame:       '.SGE_currentImageFrame',
@@ -61,7 +62,7 @@
 
 	sen.gallery.prototype.fullscreenBreakpoints = {
 		tablet: 768,
-		desktop: 1280,
+		desktop: 980,
 	}
 
 
@@ -782,7 +783,10 @@
 		}
 		// MODE: PHONE
 		else {
-
+			mainContent.css('width', contentFrame.width());
+			mainContent.css('height', contentFrame.height());
+			imageFrame.css('height', mainContent.height());
+			sidebar.css('height', contentFrame.height());
 		}
 	}
 
