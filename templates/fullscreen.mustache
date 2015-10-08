@@ -16,7 +16,7 @@
 		</div>
 		{{! SIDEBAR }}
 		<div class="sen-gal-fullscreen-sidebar">
-			<div class="sen-gal-sidebar-content">
+			<div class="sen-gal-image-meta">
 				<header class="sen-gal-header">
 					{{{ custom.headerMenu }}}
 					<div class="sen-gal-counter">
@@ -28,7 +28,9 @@
 				</header>
 				{{> partials/description }}
 			</div>
-			{{{ custom.afterSidebarContent }}}
+			<div class="sen-gal-sidebar-custom-content">
+				{{{ custom.afterSidebarContent }}}
+			</div>
 		</div>
 	</div>
 </div>

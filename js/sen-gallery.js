@@ -59,6 +59,11 @@
 		totalImageCount:         '.SGE_totalImageCount',
 	}
 
+	sen.gallery.prototype.fullscreenBreakpoints = {
+		tablet: 768,
+		desktop: 1280,
+	}
+
 
 /***************************************
 	* Gallery init
@@ -208,7 +213,9 @@
 				$galleryDiv.on('click', this.selectors.singleThumbnail, function(event) {
 					event.preventDefault();
 					var thumbId = event.currentTarget.dataset.index;
-					this.displayImage(thumbId);
+					if (this.getCurrentImageIndex() !== parseInt(thumbId)) {
+						this.displayImage(thumbId);
+					}
 				}.bind(this));
 				// CURRENT IMAGE NAV BUTTONS
 				$galleryDiv.on('click', this.selectors.btnNextImage, function(event) {
@@ -474,7 +481,9 @@
 				var $renderedGallery = $('#sen-gallery-'+this.id+'-'+templateName);
 				this.addGalleryInstance($renderedGallery);
 				this.reloadGalleryNavButtons($renderedGallery);
-				this.prepareThumbnailStrip($renderedGallery);
+				if (this.options.showThumbs) {
+					this.prepareThumbnailStrip($renderedGallery);
+				}
 				this.fireCallback('onRenderedGallery');
 				this.fireCallback('onRenderedTemplate-'+templateName);
 			}.bind(this));
@@ -669,6 +678,7 @@
 	* --------------------------------- */
 
 	sen.gallery.prototype.loadFullscreenTemplate = function(templateName, placeholderID) {
+		this.log('loading fullscreen template');
 		if (typeof(placeholderID) === 'undefined') {
 			$('body').append('<div id="sen-gallery-'+this.id+'-fullscreen-placeholder" class="sen-gallery-fullscreen-frame" style="display:none;"></div>');
 			placeholderID = '#sen-gallery-'+this.id+'-fullscreen-placeholder';
@@ -679,6 +689,9 @@
 			}.bind(this)).then(function(result){
 				this.log('fullscreen template loaded');
 				this.fullscreenTemplate = $('#sen-gallery-'+this.id+'-fullscreen');
+				if (helpers.getURLParameter('sen-gal-fullscreen') == this.id) {
+					this.displayFullscreen();
+				}
 			}.bind(this));
 	}
 
@@ -695,12 +708,17 @@
 			|| SG_GLOBAL_inFullscreenMode === true
 		) { return false; }
 		this.log('opening fullscreen mode');
+		this.fullscreenTemplate.show();
 		if (this.options.loadDefaultFullscreenTemplate === true) {
 			this.updateFullscreenFrameSizes();
 		};
-		this.fullscreenTemplate.show();
+		if (this.options.showThumbs) {
+			this.centerStripOnThumb(this.getCurrentImageIndex(), this.fullscreenTemplate);
+		}
 		this.inFullscreenMode = true;
+		this.addFullscreenParamToUrl();
 		SG_GLOBAL_inFullscreenMode = true;
+		this.fireCallback('onEnterFullscreen');
 	}
 
 	sen.gallery.prototype.closeFullscreen = function() {
@@ -711,24 +729,61 @@
 		) { return false; }
 		this.fullscreenTemplate.hide();
 		this.inFullscreenMode = false;
+		this.removeFullscreenParamFromUrl();
 		SG_GLOBAL_inFullscreenMode = false;
+		this.fireCallback('onExitFullscreen');
+	}
+
+	sen.gallery.prototype.addFullscreenParamToUrl = function() {
+		var urlKey = 'sen-gal-fullscreen';
+		var newUrl = helpers.getURLStringWithModifiedParameter(urlKey, this.id);
+		window.history.replaceState({}, window.document.title, newUrl);
+	}
+
+	sen.gallery.prototype.removeFullscreenParamFromUrl = function() {
+		var urlKey = 'sen-gal-fullscreen';
+		var newUrl = helpers.getURLStringWithModifiedParameter(urlKey, false);
+		// var newUrl = helpers.getURLStringWithRemovedParameter('sen-gal-fullscreen');
+		window.history.replaceState({}, window.document.title, newUrl);
 	}
 
 	sen.gallery.prototype.updateFullscreenFrameSizes = function() {
-		this.log('updating fullscreen frame sizes');
-
 		var viewportWidth = window.innerWidth;
 		var viewportHeight = window.innerHeight;
 		var contentFrame = this.fullscreenTemplate.find('.sen-gal-fullscreen-content-frame');
 		var topbar = this.fullscreenTemplate.find('.sen-gal-fullscreen-topbar');
 		var topbarHeight = topbar.outerHeight();
 
+		// Content frame resize (for all screen widths)
 		contentFrame.css('width', viewportWidth);
 		contentFrame.css('height', viewportHeight - topbarHeight);
 
+		// Things to resize, screen-width dependant
+		var mainContent = contentFrame.find('.sen-gal-fullscreen-main-content');
 		var imageFrame = contentFrame.find('.sen-gal-current-image-frame');
-		var thumbnailStrip = contentFrame.find('.sen-gal-thumbnails');
 
+		var thumbnailStrip = contentFrame.find('.sen-gal-thumbnails');
+		if (thumbnailStrip.length > 0) {
+			var thumbnailStripHeight = thumbnailStrip.outerHeight();
+		} else {
+			var thumbnailStripHeight = 0;
+		}
+		var sidebar = contentFrame.find('.sen-gal-fullscreen-sidebar');
+
+		// MODE: DESKTOP
+		if (viewportWidth >= this.fullscreenBreakpoints.desktop) {
+			mainContent.css('width', contentFrame.width() - sidebar.outerWidth());
+			mainContent.css('height', contentFrame.height());
+			imageFrame.css('height', mainContent.height() - thumbnailStripHeight);
+		}
+		// MODE: TABLET
+		else if (viewportWidth >= this.fullscreenBreakpoints.tablet) {
+
+		}
+		// MODE: PHONE
+		else {
+
+		}
 	}
 
 	window.sen.gallery = sen.gallery;

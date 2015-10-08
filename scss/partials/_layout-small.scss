@@ -236,11 +236,54 @@
 					}
 				}
 				.sen-gal-fullscreen-content-frame {
+					position: relative;
+					background: #111;
 					.sen-gal-fullscreen-main-content {
-						
+						position: absolute;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+						.sen-gal-current-image-frame{
+							position: absolute;
+							top: 0;
+							left: 0;
+							padding-bottom: 0;
+							.sen-gal-image {
+								padding-bottom: 0;
+								width: 100%;
+								height: 100%;
+							}
+						}
+						.sen-gal-thumbnails {
+							position: absolute;
+							bottom: 0;
+							left: 0;
+							width: 100%;
+						}
 					}
 					.sen-gal-fullscreen-sidebar {
-						float: right;
+						position: absolute;
+						top: 0;
+						right: 0;
+						width: rem-calc(320);
+						.sen-gal-image-meta {
+							padding: rem-calc(20);
+							.sen-gal-header {
+								background: none;
+								border: none;
+								margin-bottom: rem-calc(24);
+							}
+							.sen-gal-current-image-description {
+								background: none;
+								span {
+									padding: 0;
+								}
+							}
+						}
+						.sen-gal-sidebar-custom-content {
+
+						}
 					}
 				}
 			}
