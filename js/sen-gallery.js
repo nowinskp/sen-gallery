@@ -40,6 +40,7 @@
 	}
 
 	sen.gallery.prototype.selectors = {
+		btnDirectLink:           '.SGE_btnDirectLink',
 		btnMoveStripLeft:        '.SGE_btnMoveStripLeft',
 		btnMoveStripRight:       '.SGE_btnMoveStripRight',
 		btnNextImage:            '.SGE_btnNextImage',
@@ -530,6 +531,11 @@
 	sen.gallery.prototype.reloadGalleryNavButtons = function($galleryDiv) {
 		var btnNext = $galleryDiv.find(this.selectors.btnNextImage);
 		var btnPrev = $galleryDiv.find(this.selectors.btnPrevImage);
+		var btnDirectLink = $galleryDiv.find(this.selectors.btnDirectLink);
+		var currentImage = this.getCurrentImage();
+		if (typeof(currentImage.link.direct) !== 'undefined' ) {
+			btnDirectLink.attr('href', currentImage.link.direct);
+		}
 		if (this.getAdjacentImageIndex('next') === false) {
 			btnNext.hide();
 		} else {
