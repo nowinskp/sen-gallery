@@ -325,6 +325,10 @@
 					@include border-radius(50%);
 					border: rem-calc(2) solid #fff;
 					z-index: 300;
+					background-image: url('../img/icon-info.png');
+					background-repeat: no-repeat;
+					background-position: center center;
+					@include background-size(75%);
 					&:hover {
 						cursor: pointer;
 					}
@@ -335,7 +339,13 @@
 					background: rgba(0,0,0,.66);
 					@include transition(translate, 300ms, ease-out);
 					@include translate(0, 100%);
-					&.active {
+				}
+				&.mobile-show-sidebar {
+					.sen-gal-fullscreen-btn-toggle-sidebar {
+						background-image: url('../img/icon-arrow-down.png');
+						@include background-size(50%);
+					}
+					.sen-gal-fullscreen-sidebar {
 						@include translate(0, 0);
 					}
 				}

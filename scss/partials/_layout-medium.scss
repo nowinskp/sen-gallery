@@ -26,11 +26,6 @@
 						}
 					}
 					.sen-gal-fullscreen-sidebar {
-						position: absolute;
-						width: rem-calc(320);
-						// TEMP
-						background: red;
-						// ---
 						.sen-gal-image-meta {
 							padding: rem-calc(20);
 							.sen-gal-header {
@@ -54,4 +49,17 @@
 		}
 	}
 }
-@media #{$medium-only} {}
+@media #{$medium-only} {
+	.sen-gallery.js {
+		&.sen-gallery-fullscreen {
+			.sen-gal-fullscreen-content-frame {
+				.sen-gal-fullscreen-main-content {
+				}
+				.sen-gal-fullscreen-sidebar {
+					height: rem-calc(200);
+					background: #000;
+				}
+			}
+		}
+	}
+}

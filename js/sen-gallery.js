@@ -237,14 +237,18 @@
 					this.moveStrip($galleryDiv, this.options.stripScrollStepSize);
 				}.bind(this));
 				// FULLSCREEN CONTROL BUTTONS
-				$galleryDiv.on('click', this.selectors.btnFullscreenMode, function(event) {
-					event.preventDefault();
-					this.displayFullscreen();
-				}.bind(this));
-				$galleryDiv.on('click', this.selectors.btnCloseFullscreen, function(event) {
-					event.preventDefault();
-					this.closeFullscreen();
-				}.bind(this));
+				if (
+					this.options.allowFullscreen === true
+				) {
+					$galleryDiv.on('click', this.selectors.btnFullscreenMode, function(event) {
+						event.preventDefault();
+						this.displayFullscreen();
+					}.bind(this));
+					$galleryDiv.on('click', this.selectors.btnCloseFullscreen, function(event) {
+						event.preventDefault();
+						this.closeFullscreen();
+					}.bind(this));
+				}
 				// WINDOW RESIZE ACTION
 				$(window).resize(function(event) {
 					if (this.options.showThumbs) {
@@ -693,7 +697,24 @@
 				if (helpers.getURLParameter('sen-gal-fullscreen') == this.id) {
 					this.displayFullscreen();
 				}
+				this.onFullscreenTemplateLoaded();
 			}.bind(this));
+	}
+
+	sen.gallery.prototype.onFullscreenTemplateLoaded = function() {
+		// bind fullscreen button event
+		if (this.options.loadDefaultFullscreenTemplate === true) {
+			for (var instance in this.instances) {
+			   if (this.instances.hasOwnProperty(instance)) {
+			   	var $galleryDiv = this.instances[instance];
+			   	// bind events
+					$galleryDiv.on('click', this.selectors.btnToggleSidebar, function(event) {
+						event.preventDefault();
+						this.fullscreenTemplate.find('.sen-gal-fullscreen-content-frame').toggleClass('mobile-show-sidebar');
+					}.bind(this));
+			   }
+			}
+		}
 	}
 
 	sen.gallery.prototype.isFullscreenTemplateLoaded = function() {
@@ -779,7 +800,10 @@
 		}
 		// MODE: TABLET
 		else if (viewportWidth >= this.fullscreenBreakpoints.tablet) {
-
+			sidebar.css('height', '');
+			mainContent.css('width', contentFrame.width());
+			mainContent.css('height', contentFrame.height() - sidebar.outerHeight());
+			imageFrame.css('height', mainContent.height() - thumbnailStripHeight);
 		}
 		// MODE: PHONE
 		else {
