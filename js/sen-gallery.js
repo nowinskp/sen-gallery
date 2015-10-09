@@ -113,6 +113,10 @@
 		if (this.options.debugMode) console.log('sen-gal#'+this.id+': ' + message);
 	}
 
+	sen.gallery.prototype.loadLabels = function(labels) {
+		this.labels = labels;
+	}
+
 	sen.gallery.prototype.getTemplatePath = function() {
 		if (this.options.templatePath !== false) {
 			return this.options.templatePath;
