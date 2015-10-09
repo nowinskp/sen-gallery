@@ -1,4 +1,10 @@
 <header class="sen-gal-header">
+	<div class="sen-gal-col-right">
+		{{{ custom.headerMenu }}}
+		{{# gallery.allow-fullscreen }}
+		<a href="#fullscreen" class="sen-gal-btn-fullscreen SGE_btnFullscreenMode" display:>{{ labels.showFullscreen }}</a>
+		{{/ gallery.allow-fullscreen }}
+	</div>
 	<div class="sen-gal-col-left">
 		<div class="sen-gal-counter">
 			<span class="SGE_currentImageNumber">{{ gallery.current-image-number }}</span>/<span class="SGE_totalImageCount">{{ gallery.total-image-count }}</span>
@@ -6,11 +12,5 @@
 		<h1 class="sen-gal-current-image-title SGE_currentImageTitle">
 			<span>{{ current-image.title }}</span>
 		</h1>
-	</div>
-	<div class="sen-gal-col-right">
-		{{{ custom.headerMenu }}}
-		{{# gallery.allow-fullscreen }}
-		<a href="#fullscreen" class="sen-gal-btn-fullscreen SGE_btnFullscreenMode" display:>{{ labels.showFullscreen }}</a>
-		{{/ gallery.allow-fullscreen }}
 	</div>
 </header>

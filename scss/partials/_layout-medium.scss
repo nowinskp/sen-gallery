@@ -2,7 +2,25 @@
 // **********************************************
 @media #{$medium-up} {
 	.sen-gallery {
+		.sen-gal-current-image-frame {
+			.sen-gal-current-image-buttons {
+				.sen-gal-image-link-next,
+				.sen-gal-image-link-prev {
+					width: rem-calc(64);
+					@include opacity(.75);
+				}
+			}
+		}
 		&.js {
+			// THUMBNAIL STRIP
+			.sen-gal-thumbnails {
+				.sen-gal-move-strip-left,
+				.sen-gal-move-strip-right {
+					background-color: rgba(0, 0, 0, .66);
+					@include opacity(.75);
+				}
+			}
+			// FULLSCREEN TEMPLATE
 			&.sen-gallery-fullscreen {
 				.sen-gal-fullscreen-topbar {
 					height: rem-calc(60);
