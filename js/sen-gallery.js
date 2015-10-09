@@ -695,7 +695,7 @@
 			}.bind(this)).then(function(result){
 				this.log('fullscreen template loaded');
 				this.fullscreenTemplate = $('#sen-gallery-'+this.id+'-fullscreen');
-				if (helpers.getURLParameter('sen-gal-fullscreen') == this.id) {
+				if (String(helpers.getURLParameter('sen-gal-fullscreen')) === String(this.id)) {
 					this.displayFullscreen();
 				}
 				this.onFullscreenTemplateLoaded();
