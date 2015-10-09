@@ -22,6 +22,7 @@
 		loopGallery: true,
 		firstImageIndex: false,
 		stripScrollStepSize: 300,
+		mapKeyboardKeysInFullscreenMode: true
 	}
 
 	sen.gallery.prototype.labels = {
@@ -703,7 +704,7 @@
 	}
 
 	sen.gallery.prototype.onFullscreenTemplateLoaded = function() {
-		// bind fullscreen button event
+		// bind fullscreen template button events
 		if (this.options.loadDefaultFullscreenTemplate === true) {
 			for (var instance in this.instances) {
 			   if (this.instances.hasOwnProperty(instance)) {
@@ -715,6 +716,16 @@
 					}.bind(this));
 			   }
 			}
+		}
+		// bind keyboard keys events
+		if (this.options.mapKeyboardKeysInFullscreenMode === true) {
+			document.onkeydown = function(e) {
+				if (this.inFullscreenMode === true) {
+					if (e.keyCode === 27) {	this.closeFullscreen(); }
+					if (e.keyCode === 37) {	this.displayAdjacentImage('prev'); }
+					if (e.keyCode === 39) {	this.displayAdjacentImage('next'); }
+				}
+			}.bind(this);
 		}
 	}
 
