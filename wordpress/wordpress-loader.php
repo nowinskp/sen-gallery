@@ -5,6 +5,10 @@
 // This file integrates the gallery with WordPress by loading
 // additional files and setting up WP filters and actions.
 
+# GET SEN GALLERY PHP CONFIG
+# ------------------------------------------
+$config = sen\galleries\Config::getInstance();
+
 
 # SETUP CLASSES AUTOLOADER
 # ------------------------------------------
@@ -36,7 +40,9 @@ add_action('print_media_templates', function(){
 
 # SETUP FILTERS
 # ------------------------------------------
-add_filter( 'post_gallery', 'sen_galleries_getWPGalleryCode', 10, 2 );
+if ($config->getSetting(['WPLoader' => 'setupDefaultWPGalleryCodeFilter']) === true) {
+	add_filter( 'post_gallery', 'sen_galleries_getWPGalleryCode', 10, 2 );
+}
 function sen_galleries_getWPGalleryCode( $output, $attr ) {
 	$WPGalleryOutput = new sen\galleries\WPGalleryOutput();
 	$galleryDataArray = $WPGalleryOutput->getOutput($output, $attr);
@@ -57,24 +63,31 @@ add_action( 'admin_enqueue_scripts', 'sen_loadGalleryScripts' );
 add_action( 'wp_enqueue_scripts', 'sen_loadGalleryScripts' );
 function sen_loadGalleryScripts(){
 
+	$config = sen\galleries\Config::getInstance();
 	$currentDir = sen_get_current_dir_uri(__DIR__);
 
-	wp_enqueue_style(
-		'sen-gallery-styles',
-		$currentDir.'/../css/style.css'
-	);
+	if ($config->getSetting(['WPLoader' => 'enqueueGalleryCSS']) === true) {
+		wp_enqueue_style(
+			'sen-gallery-styles',
+			$currentDir.'/../css/style.css'
+		);
+	}
 
-	wp_register_script(
-		'sen-gallery',
-		$currentDir.'/../js/_sen-gallery.min.js',
-		['jquery'], false, false
-	);
-	wp_enqueue_script( 'sen-gallery' );
+	if ($config->getSetting(['WPLoader' => 'enqueueGalleryScript']) === true) {
+		wp_register_script(
+			'sen-gallery',
+			$currentDir.'/../js/_sen-gallery.min.js',
+			['jquery'], false, false
+		);
+		wp_enqueue_script( 'sen-gallery' );
+	}
 
-	wp_register_script(
-		'sen-gallery-init',
-		$currentDir.'/js/sen-gallery-init.js',
-		['jquery'], false, false
-	);
-	wp_enqueue_script( 'sen-gallery-init' );
+	if ($config->getSetting(['WPLoader' => 'enqueueGalleryAutoInit']) === true) {
+		wp_register_script(
+			'sen-gallery-init',
+			$currentDir.'/js/sen-gallery-init.js',
+			['jquery'], false, false
+		);
+		wp_enqueue_script( 'sen-gallery-init' );
+	}
 }

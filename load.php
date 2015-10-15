@@ -31,11 +31,31 @@ spl_autoload_register(function($className){
 });
 
 
+# LOAD CONFIG
+# ------------------------------------------
+$config = sen\galleries\Config::getInstance();
+$defaultConfigArray = [
+   'useWPLoader' => false, // loads wordpress integration
+   'WPLoader' => [
+      'setupDefaultWPGalleryCodeFilter' => true,
+      'enqueueGalleryCSS' => true,
+      'enqueueGalleryScript' => true,
+      'enqueueGalleryAutoInit' => true,
+   ],
+];
+$config->setSettings($defaultConfigArray);
+// load user settings from external file
+if (file_exists(__DIR__ . '/settings-user.php')) {
+   require_once(__DIR__."/settings-user.php");
+}
+
+
 # LOAD REQUIRED FILES
 # ------------------------------------------
-$files = [
-	'wordpress/wordpress-loader', // loads wordpress integration
-];
+$files = [];
+if ($config->getSetting('useWPLoader') === true) {
+	$files[] = 'wordpress/wordpress-loader';
+}
 
 foreach ($files as $file) {
 	require_once(__DIR__."/$file.php");
