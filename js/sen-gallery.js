@@ -8,7 +8,7 @@
 		this.id = id;
 		this.options = helpers.extend( {}, this.options );
 		helpers.extend( this.options, options );
-		this._init();
+		this.callbacks = {};
 	}
 
 	sen.gallery.prototype.options = {
@@ -64,16 +64,19 @@
 	* Gallery init
 	* --------------------------------- */
 
-	sen.gallery.prototype._init = function() {
+	sen.gallery.prototype.init = function() {
 		this.log('init');
+
 		// set object vars
 		this.images = [];
 		this.instances = {};
+		this.customContent = {};
 		this.currentImageIndex = 0;
 		this.currentImageTemplate = {};
 		this.duringImageExchange = false;
 		this.fullscreenTemplate = null;
 		this.inFullscreenMode = false;
+
 		// cache current-image template file
 		Q
 			.fcall(function(){ return this.cacheCurrentImageTemplate(); }.bind(this))
@@ -81,6 +84,7 @@
 				if (result === true) { this.log('current-image template cached');	}
 				else { this.log('failed to cache current-image template'); }
 			}.bind(this));
+
 		// check if current image is set in URL scheme
 		var currentImgUrlParamValue = helpers.getURLParameter('gal-'+this.id+'-img');
 		if (
@@ -94,8 +98,15 @@
 		) {
 			this.currentImageIndex = this.options.firstImageIndex;
 		}
-		this.registerCallbacks();
-		this.registerCustomContent();
+
+		// register custom content for default gallery templates
+		this.registerCustomContent('inline');
+		this.registerCustomContent('fullscreen');
+
+		// fire onInit callback
+		this.fireCallback('onInit');
+
+		// preload fullscreen template if requested
 		if (
 			this.options.allowFullscreen === true &&
 			this.options.loadDefaultFullscreenTemplate === true
@@ -143,22 +154,19 @@
 	* Callbacks setup & methods
 	* --------------------------------- */
 
-	sen.gallery.prototype.registerCallbacks = function() {
-		this.callbacks = {
-			onNextImage: null,
-			onPrevImage: null,
-			onImageSelect: null,
-			onImageLoad: null,
-			onFullscreenLoad: null,
-			onImportedDiv: null,
-			onRenderedGallery: null,
-			// onRenderedTemplate-[templateName]: null - dynamic
-			onDisplayImage: null,
-			onImageChanged: null,
-			onNextImage: null,
-			onPreviousImage: null,
-		}
-	}
+	// AVAILABLE BUILT-IN CALLBACKS
+	// -> onNextImage
+	// -> onPrevImage
+	// -> onImageSelect
+	// -> onImageLoad
+	// -> onFullscreenLoad
+	// -> onImportedDiv
+	// -> onRenderedGallery
+	// -> onRenderedTemplate-[templateName]
+	// -> onDisplayImage
+	// -> onImageChanged
+	// -> onNextImage
+	// -> onPreviousImage
 
 	sen.gallery.prototype.setCallback = function(callbackName, callbackFunction) {
 		if (typeof(callbackFunction) === 'function') {
@@ -185,17 +193,27 @@
 	* Custom content injection methods
 	* --------------------------------- */
 
-	sen.gallery.prototype.registerCustomContent = function() {
-			this.customContent = {
-			inline: {
-				headerMenu: '',
-				beforeGalleryContent: '',
-				afterGalleryContent: '',
-			},
+	// AVAILABLE CUSTOM CONTENT PLACEHOLDERS FOR BUILT-IN TEMPLATES
+	//
+	// Template "inline":
+	// -> headerMenu
+	// -> beforeGalleryContent
+	// -> afterGalleryContent
+	//
+	// Template "fullscreen":
+	// -> topbarLogo
+	// -> headerMenu
+	// -> afterSidebarContent
+
+	sen.gallery.prototype.registerCustomContent = function(templateName) {
+		if (!this.customContent.hasOwnProperty(templateName)) {
+			this.customContent[templateName] = {};
+			this.log('registered '+templateName+' for setting custom content');
 		}
 	}
 
 	sen.gallery.prototype.setCustomContent = function(templateName, elementName, HTML) {
+		this.log('setting custom content for '+elementName+' in '+templateName+' template');
 		this.customContent[templateName][elementName] = HTML;
 	}
 
