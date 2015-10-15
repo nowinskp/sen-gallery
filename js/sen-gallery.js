@@ -828,12 +828,14 @@
 
 		// MODE: DESKTOP
 		if (viewportWidth >= this.fullscreenBreakpoints.desktop) {
+			this.fullscreenTemplate.attr('data-display-mode', 'desktop');
 			mainContent.css('width', contentFrame.width() - sidebar.outerWidth());
 			mainContent.css('height', contentFrame.height());
 			imageFrame.css('height', mainContent.height() - thumbnailStripHeight);
 		}
 		// MODE: TABLET
 		else if (viewportWidth >= this.fullscreenBreakpoints.tablet) {
+			this.fullscreenTemplate.attr('data-display-mode', 'tablet');
 			sidebar.css('height', '');
 			mainContent.css('width', contentFrame.width());
 			mainContent.css('height', contentFrame.height() - sidebar.outerHeight());
@@ -841,6 +843,7 @@
 		}
 		// MODE: PHONE
 		else {
+			this.fullscreenTemplate.attr('data-display-mode', 'phone');
 			mainContent.css('width', contentFrame.width());
 			mainContent.css('height', contentFrame.height());
 			imageFrame.css('height', mainContent.height());
