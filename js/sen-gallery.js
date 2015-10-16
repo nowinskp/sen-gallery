@@ -500,19 +500,25 @@
 	sen.gallery.prototype.renderGallery = function(selector, templateName) {
 		var $galleryPlaceholder = $(selector);
 		if ($galleryPlaceholder.length <= 0) { return false; }
+		this.log('rendering '+templateName+' template');
 		return Q
 			.fcall(function(){ return this.getTemplateHTML(templateName); }.bind(this))
 			.then(function(renderedGallery){
-				$galleryPlaceholder.replaceWith(renderedGallery);
-				$galleryPlaceholder.attr('data-template', templateName);
-				var $renderedGallery = $('#sen-gallery-'+this.id+'-'+templateName);
-				this.addGalleryInstance($renderedGallery);
-				this.reloadGalleryNavButtons($renderedGallery);
-				if (this.options.showThumbs) {
-					this.prepareThumbnailStrip($renderedGallery);
+				try {
+					this.log('replacing "'+selector+'"" selector with '+templateName+' template');
+					$galleryPlaceholder.replaceWith(renderedGallery);
+					$galleryPlaceholder.attr('data-template', templateName);
+					var $renderedGallery = $('#sen-gallery-'+this.id+'-'+templateName);
+					this.addGalleryInstance($renderedGallery);
+					this.reloadGalleryNavButtons($renderedGallery);
+					if (this.options.showThumbs) {
+						this.prepareThumbnailStrip($renderedGallery);
+					}
+					this.fireCallback('onRenderedGallery');
+					this.fireCallback('onRenderedTemplate-'+templateName);
+				} catch(error) {
+					console.error(error);
 				}
-				this.fireCallback('onRenderedGallery');
-				this.fireCallback('onRenderedTemplate-'+templateName);
 			}.bind(this));
 	}
 
@@ -526,9 +532,11 @@
 		return helpers
 			.getPartialsMap(this.getTemplatePath(), templateName, '.mustache')
 			.then(function(parsedObj){
+				this.log('partials map loaded for '+templateName+' template');
 				var currentImageArray = this.getCurrentImage();
-				currentImageArray['link']['prev'] = '#';
-				currentImageArray['link']['next'] = '#';
+				currentImageArray.link.prev = '#';
+				currentImageArray.link.next = '#';
+				this.log('Mustache.render: '+templateName);
 				return Mustache.render(
 					parsedObj.template,
 					{
@@ -720,7 +728,7 @@
 					this.displayFullscreen();
 				}
 				this.onFullscreenTemplateLoaded();
-			}.bind(this));
+			}.bind(this)).done();
 	}
 
 	sen.gallery.prototype.onFullscreenTemplateLoaded = function() {
