@@ -9,6 +9,14 @@
 		this.options = helpers.extend( {}, this.options );
 		helpers.extend( this.options, options );
 		this.callbacks = {};
+		this.images = [];
+		this.instances = {};
+		this.customContent = {};
+		this.currentImageIndex = 0;
+		this.currentImageTemplate = {};
+		this.duringImageExchange = false;
+		this.fullscreenTemplate = null;
+		this.inFullscreenMode = false;
 	}
 
 	sen.gallery.prototype.options = {
@@ -66,16 +74,6 @@
 
 	sen.gallery.prototype.init = function() {
 		this.log('init');
-
-		// set object vars
-		this.images = [];
-		this.instances = {};
-		this.customContent = {};
-		this.currentImageIndex = 0;
-		this.currentImageTemplate = {};
-		this.duringImageExchange = false;
-		this.fullscreenTemplate = null;
-		this.inFullscreenMode = false;
 
 		// cache current-image template file
 		Q
