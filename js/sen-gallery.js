@@ -96,8 +96,11 @@
 		) {
 			this.currentImageIndex = this.options.firstImageIndex;
 		}
+
 		// mark current image in images array as active
-		this.images[currentImgUrlParamValue].active = 'active';
+		if(this.hasImage(this.getCurrentImageIndex())) {
+			this.images[this.getCurrentImageIndex()].active = 'active';
+		}
 
 		// register custom content for default gallery templates
 		this.registerCustomContent('inline');
