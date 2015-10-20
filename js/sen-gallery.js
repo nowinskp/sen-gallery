@@ -439,6 +439,7 @@
 		   	this.reloadGalleryCounters($galleryDiv);
 		   	this.reloadGalleryNavButtons($galleryDiv);
 		   	this.setGalleryUrlParam('img', this.getCurrentImageIndex());
+				this.duringImageExchange = false;
 		   	this.fireCallback('onImageChanged', {
 		   		imageIndex: imageIndex,
 		   		instance: instance
@@ -462,7 +463,6 @@
 			setTimeout(function(){
 				imageFrame.removeClass('exchanging');
 			}, 100);
-			this.duringImageExchange = false;
 		}.bind(this), 500);
 	}
 
@@ -784,6 +784,7 @@
 			this.centerStripOnThumb(this.getCurrentImageIndex(), this.fullscreenTemplate);
 		}
 		this.inFullscreenMode = true;
+		this.duringImageExchange = false;
 		this.addFullscreenParamToUrl();
 		SG_GLOBAL_inFullscreenMode = true;
 		this.fireCallback('onEnterFullscreen');
