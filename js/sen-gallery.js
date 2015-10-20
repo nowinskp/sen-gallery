@@ -771,7 +771,8 @@
 
 	sen.gallery.prototype.displayFullscreen = function() {
 		if (
-			this.fullscreenTemplate.length <= 0
+			this.fullscreenTemplate === null
+			|| this.fullscreenTemplate.length <= 0
 			|| SG_GLOBAL_inFullscreenMode === true
 		) { return false; }
 		this.log('opening fullscreen mode');
