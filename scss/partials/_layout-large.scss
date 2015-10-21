@@ -22,7 +22,6 @@
 					@include border-radius(8px);
 					background-image: url('../img/icon-zoom.png');
 					@include background-size(50%);
-					@include translate(0, rem-calc(-600));
 				}
 				.sen-gal-image-link-next,
 				.sen-gal-image-link-prev,
@@ -31,7 +30,7 @@
 					@include transition(translate, 300ms, ease-out);
 				}
 				.sen-gal-image-link-direct {
-					@include translate(0, rem-calc(-600));
+					@include translate(0, rem-calc(-1000));
 				}
 				.sen-gal-image-link-prev {
 					@include translateX(rem-calc(-96));
