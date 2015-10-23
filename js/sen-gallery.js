@@ -10,7 +10,7 @@
 		helpers.extend( this.options, options );
 		this.callbacks = {};
 		this.images = [];
-		this.instances = {};
+		this.renderedTemplates = {};
 		this.customContent = {};
 		this.currentImageIndex = 0;
 		this.currentImageTemplate = {};
@@ -146,9 +146,9 @@
 		window.history.replaceState({}, window.document.title, newUrl);
 	}
 
-	sen.gallery.prototype.addGalleryInstance = function($DOMobject) {
-		if (typeof(this.instances[$DOMobject.selector]) === 'undefined') {
-			this.instances[$DOMobject.selector] = $DOMobject;
+	sen.gallery.prototype.registerRenderedTemplate = function($DOMobject) {
+		if (typeof(this.renderedTemplates[$DOMobject.selector]) === 'undefined') {
+			this.renderedTemplates[$DOMobject.selector] = $DOMobject;
 		}
 		this.loadGalleryEvents();
 	}
@@ -163,6 +163,8 @@
 	// -> onPrevImage
 	// -> onImageSelect
 	// -> onImageLoad
+	// -> onEnterFullscreen
+	// -> onExitFullscreen
 	// -> onFullscreenLoad
 	// -> onImportedDiv
 	// -> onRenderedGallery
@@ -236,9 +238,9 @@
 	* --------------------------------- */
 
 	sen.gallery.prototype.loadGalleryEvents = function() {
-		for (var instance in this.instances) {
-		   if (this.instances.hasOwnProperty(instance)) {
-				var $galleryDiv = this.instances[instance];
+		for (var template in this.renderedTemplates) {
+		   if (this.renderedTemplates.hasOwnProperty(template)) {
+				var $galleryDiv = this.renderedTemplates[template];
 				// THUMBNAIL STRIP IMAGE SELECTION
 				$galleryDiv.on('click', this.selectors.thumbnailStrip, function(event) {
 					event.preventDefault();
@@ -427,12 +429,12 @@
 		) { return false; }
 		this.duringImageExchange = true;
 		this.fireCallback('onDisplayImage', {
-			imageIndex: imageIndex
+			requestedImageIndex: imageIndex
 		});
 		if (imageIndex === this.getCurrentImageIndex()) { return false; }
-		for (var instance in this.instances) {
-		   if (this.instances.hasOwnProperty(instance)) {
-		   	var $galleryDiv = this.instances[instance];
+		for (var template in this.renderedTemplates) {
+		   if (this.renderedTemplates.hasOwnProperty(template)) {
+		   	var $galleryDiv = this.renderedTemplates[template];
 		   	this.currentImageIndex = imageIndex;
 		   	if (this.options.showThumbs) {
 		   		this.markThumbnailOnStrip(imageIndex, $galleryDiv);
@@ -446,8 +448,8 @@
 		   	this.setGalleryUrlParam('img', this.getCurrentImageIndex());
 				this.duringImageExchange = false;
 		   	this.fireCallback('onImageChanged', {
-		   		imageIndex: imageIndex,
-		   		instance: instance
+		   		requestedImageIndex: imageIndex,
+		   		template: template
 		   	});
 		   }
 		}
@@ -519,7 +521,7 @@
 					$galleryPlaceholder.replaceWith(renderedGallery);
 					$galleryPlaceholder.attr('data-template', templateName);
 					var $renderedGallery = $('#sen-gallery-'+this.id+'-'+templateName);
-					this.addGalleryInstance($renderedGallery);
+					this.registerRenderedTemplate($renderedGallery);
 					this.reloadGalleryNavButtons($renderedGallery);
 					if (this.options.showThumbs) {
 						this.prepareThumbnailStrip($renderedGallery);
@@ -745,9 +747,9 @@
 	sen.gallery.prototype.onFullscreenTemplateLoaded = function() {
 		// bind fullscreen template button events
 		if (this.options.loadDefaultFullscreenTemplate === true) {
-			for (var instance in this.instances) {
-			   if (this.instances.hasOwnProperty(instance)) {
-			   	var $galleryDiv = this.instances[instance];
+			for (var template in this.renderedTemplates) {
+			   if (this.renderedTemplates.hasOwnProperty(template)) {
+			   	var $galleryDiv = this.renderedTemplates[template];
 			   	// bind events
 					$galleryDiv.on('click', this.selectors.btnToggleSidebar, function(event) {
 						event.preventDefault();
