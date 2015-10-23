@@ -24,6 +24,7 @@ class Gallery {
 	// supported options w/ their defaults:
 	// [
 	// 	'showThumbs' => true  -- display images thumbnail list
+	// 	'showDirectLinks' => true  -- allow display of direct image links
 	// ]
 	protected $options;
 
@@ -238,6 +239,7 @@ class Gallery {
 				'total-image-count'    => $this->imageCount,
 				'current-image-number' => ($this->currentImage + 1),
 				'show-thumbs'          => $this->options['showThumbs'],
+				'show-direct-links'    => $this->options['showDirectLinks'],
 				'options'              => htmlentities(json_encode($this->options), ENT_QUOTES, 'UTF-8'),
 				'imagejson'            => $includeJSONData ? htmlentities($this->getGalleryImageDataJSON(), ENT_QUOTES, 'UTF-8') : false,
 			],

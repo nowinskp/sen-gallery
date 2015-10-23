@@ -23,6 +23,7 @@
 		debugMode: false,
 		allowFullscreen: true,
 		showThumbs: true,
+		showDirectLinks: true,
 		adFrame: false,
 		pluginPath: '/',
 		templatePath: false,
@@ -551,6 +552,7 @@
 							'total-image-count': this.images.length,
 							'current-image-number': this.getCurrentImageNumber(),
 							'show-thumbs': this.options.showThumbs,
+							'show-direct-links': this.options.showDirectLinks,
 							'allow-fullscreen': this.options.allowFullscreen
 						},
 						custom: this.getCustomContent(templateName),

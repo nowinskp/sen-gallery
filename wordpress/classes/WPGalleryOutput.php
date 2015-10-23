@@ -94,6 +94,7 @@ if ($images) {
 	return [
 		'images'  => $images,
 		'options' => [
+			'showDirectLinks' => true,
 			'showThumbs' => $showThumbs,
 			'thumbColumns' => $thumbColumns
 		]
