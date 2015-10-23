@@ -181,6 +181,10 @@
 
 	sen.gallery.prototype.fireCallback = function(callbackName, params) {
 		this.log('firing callback: ' + callbackName);
+		if (typeof(params) == 'undefined') {
+			var params = {};
+		}
+		params.gallery = this;
 		if (typeof(this.callbacks[callbackName]) === 'function') {
 			this.callbacks[callbackName](params);
 		}
