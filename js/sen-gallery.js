@@ -825,7 +825,7 @@
 	}
 
 	sen.gallery.prototype.updateFullscreenFrameSizes = function() {
-		var viewportWidth = window.innerWidth;
+		var viewportWidth = this.fullscreenTemplate.find('.sen-gal-fullscreen-topbar').outerWidth();
 		var viewportHeight = window.innerHeight;
 		var contentFrame = this.fullscreenTemplate.find('.sen-gal-fullscreen-content-frame');
 		var topbar = this.fullscreenTemplate.find('.sen-gal-fullscreen-topbar');
