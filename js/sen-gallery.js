@@ -171,7 +171,6 @@
 	// -> onRenderedTemplate-[templateName]
 	// -> onDisplayImage
 	// -> onImageChanged
-	// -> onNextImage
 	// -> onPreviousImage
 
 	sen.gallery.prototype.setCallback = function(callbackName, callbackFunction) {
@@ -845,7 +844,12 @@
 		} else {
 			var thumbnailStripHeight = 0;
 		}
+
+		// sidebar elements
 		var sidebar = contentFrame.find('.sen-gal-fullscreen-sidebar');
+		var sidebarImageMeta = sidebar.find('.sen-gal-image-meta');
+		var sidebarCustomContentContainer = sidebar.find('.sen-gal-sidebar-custom-content');
+		sidebarCustomContentContainer.css('height', '');
 
 		// MODE: DESKTOP
 		if (viewportWidth >= this.fullscreenBreakpoints.desktop) {
@@ -853,6 +857,7 @@
 			mainContent.css('width', contentFrame.width() - sidebar.outerWidth());
 			mainContent.css('height', contentFrame.height());
 			imageFrame.css('height', mainContent.height() - thumbnailStripHeight);
+			sidebarCustomContentContainer.css('height', contentFrame.height() - sidebarImageMeta.outerHeight());
 		}
 		// MODE: TABLET
 		else if (viewportWidth >= this.fullscreenBreakpoints.tablet) {
