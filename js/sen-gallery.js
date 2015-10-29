@@ -146,11 +146,11 @@
 		window.history.replaceState({}, window.document.title, newUrl);
 	}
 
-	sen.gallery.prototype.registerRenderedTemplate = function($DOMobject) {
-		if (typeof(this.renderedTemplates[$DOMobject.selector]) === 'undefined') {
-			this.renderedTemplates[$DOMobject.selector] = $DOMobject;
+	sen.gallery.prototype.registerRenderedTemplate = function($galleryDiv) {
+		if (typeof(this.renderedTemplates[$galleryDiv.selector]) === 'undefined') {
+			this.renderedTemplates[$galleryDiv.selector] = $galleryDiv;
 		}
-		this.loadGalleryEvents();
+		this.loadGalleryEvents($galleryDiv);
 	}
 
 
@@ -236,72 +236,62 @@
 	* Events & interactions loading
 	* --------------------------------- */
 
-	sen.gallery.prototype.loadGalleryEvents = function() {
-		for (var template in this.renderedTemplates) {
-		   if (this.renderedTemplates.hasOwnProperty(template)) {
-				var $galleryDiv = this.renderedTemplates[template];
-				// THUMBNAIL STRIP IMAGE SELECTION
-				$galleryDiv.on('click', this.selectors.thumbnailStrip, function(event) {
-					event.preventDefault();
-				});
-				$galleryDiv.on('click', this.selectors.singleThumbnail, function(event) {
-					event.preventDefault();
-					var thumbId = event.currentTarget.dataset.index;
-					if (this.getCurrentImageIndex() !== parseInt(thumbId)) {
-						this.displayImage(thumbId);
-					}
-				}.bind(this));
-				// CURRENT IMAGE NAV BUTTONS
-				$galleryDiv.on('click', this.selectors.btnNextImage, function(event) {
-					event.preventDefault();
-					this.displayAdjacentImage('next');
-				}.bind(this));
-				$galleryDiv.on('click', this.selectors.btnPrevImage, function(event) {
-					event.preventDefault();
-					this.displayAdjacentImage('prev');
-				}.bind(this));
-				// STRIP NAV BUTTONS
-				$galleryDiv.on('click', this.selectors.btnMoveStripLeft, function(event) {
-					event.preventDefault();
-					this.moveStrip($galleryDiv, -this.options.stripScrollStepSize);
-				}.bind(this));
-				$galleryDiv.on('click', this.selectors.btnMoveStripRight, function(event) {
-					event.preventDefault();
-					this.moveStrip($galleryDiv, this.options.stripScrollStepSize);
-				}.bind(this));
-				// FULLSCREEN CONTROL BUTTONS
-				if (
-					this.options.allowFullscreen === true
-				) {
-					$galleryDiv.on('click', this.selectors.btnFullscreenMode, function(event) {
-						event.preventDefault();
-						this.displayFullscreen();
-					}.bind(this));
-					$galleryDiv.on('click', this.selectors.btnCloseFullscreen, function(event) {
-						event.preventDefault();
-						this.closeFullscreen();
-					}.bind(this));
-				}
-				// WINDOW RESIZE ACTION
-				$(window).resize(function(event) {
-					if (this.options.showThumbs) {
-						var stripMoveParams = this.calculateStripMoveParams($galleryDiv);
-						if (Math.abs(stripMoveParams.currentMargin) > stripMoveParams.maxDistance) {
-							var newDistance = Math.abs(stripMoveParams.currentMargin) - stripMoveParams.maxDistance;
-							this.moveStrip($galleryDiv, newDistance);
-						}
-						this.reloadStripNavVisibility($galleryDiv, stripMoveParams);
-					}
-					if (
-						this.options.allowFullscreen === true &&
-						this.options.loadDefaultFullscreenTemplate === true &&
-						this.inFullscreenMode === true
-					) {
-						this.updateFullscreenFrameSizes();
-					}
-				}.bind(this));
-		   }
+	sen.gallery.prototype.loadGalleryEvents = function($galleryDiv) {
+		// THUMBNAIL STRIP IMAGE SELECTION
+		$galleryDiv.on('click', this.selectors.thumbnailStrip, function(event) {
+			event.preventDefault();
+		});
+		$galleryDiv.on('click', this.selectors.singleThumbnail, function(event) {
+			event.preventDefault();
+			var thumbId = event.currentTarget.dataset.index;
+			if (this.getCurrentImageIndex() !== parseInt(thumbId)) {
+				this.displayImage(thumbId);
+			}
+		}.bind(this));
+		// CURRENT IMAGE NAV BUTTONS
+		$galleryDiv.on('click', this.selectors.btnNextImage, function(event) {
+			event.preventDefault();
+			this.log('clicked on button: next image');
+			this.displayAdjacentImage('next');
+		}.bind(this));
+		$galleryDiv.on('click', this.selectors.btnPrevImage, function(event) {
+			event.preventDefault();
+			this.log('clicked on button: prev image');
+			this.displayAdjacentImage('prev');
+		}.bind(this));
+		// STRIP NAV BUTTONS
+		$galleryDiv.on('click', this.selectors.btnMoveStripLeft, function(event) {
+			event.preventDefault();
+			this.moveStrip($galleryDiv, -this.options.stripScrollStepSize);
+		}.bind(this));
+		$galleryDiv.on('click', this.selectors.btnMoveStripRight, function(event) {
+			event.preventDefault();
+			this.moveStrip($galleryDiv, this.options.stripScrollStepSize);
+		}.bind(this));
+		// FULLSCREEN CONTROL BUTTONS
+		if (
+			this.options.allowFullscreen === true
+		) {
+			$galleryDiv.on('click', this.selectors.btnFullscreenMode, function(event) {
+				event.preventDefault();
+				this.displayFullscreen();
+			}.bind(this));
+			$galleryDiv.on('click', this.selectors.btnCloseFullscreen, function(event) {
+				event.preventDefault();
+				this.closeFullscreen();
+			}.bind(this));
 		}
+		// WINDOW RESIZE ACTION
+		$(window).resize(function(event) {
+			if (this.options.showThumbs) {
+				var stripMoveParams = this.calculateStripMoveParams($galleryDiv);
+				if (Math.abs(stripMoveParams.currentMargin) > stripMoveParams.maxDistance) {
+					var newDistance = Math.abs(stripMoveParams.currentMargin) - stripMoveParams.maxDistance;
+					this.moveStrip($galleryDiv, newDistance);
+				}
+				this.reloadStripNavVisibility($galleryDiv, stripMoveParams);
+			}
+		}.bind(this));
 	}
 
 
@@ -767,6 +757,16 @@
 				}
 			}.bind(this);
 		}
+		// bind window resize events
+		$(window).resize(function(event) {
+			if (
+				this.options.allowFullscreen === true &&
+				this.options.loadDefaultFullscreenTemplate === true &&
+				this.inFullscreenMode === true
+			) {
+				this.updateFullscreenFrameSizes();
+			}
+		}.bind(this));
 	}
 
 	sen.gallery.prototype.isFullscreenTemplateLoaded = function() {
