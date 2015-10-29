@@ -11,6 +11,7 @@
 		this.callbacks = {};
 		this.images = [];
 		this.renderedTemplates = {};
+		this.currentImageReplacementTimeouts = {};
 		this.customContent = {};
 		this.currentImageIndex = 0;
 		this.currentImageTemplate = {};
@@ -447,19 +448,23 @@
 	sen.gallery.prototype.replaceCurrentImage = function(imageIndex, $galleryDiv) {
 		if (!this.hasImage(imageIndex)) { return false; }
 		var imageFrame = $galleryDiv.find(this.selectors.currentImageFrame);
-		var currentImage = $galleryDiv.find(this.selectors.currentImage);
 		imageFrame.addClass('exchanging');
-		setTimeout(function(){
-			var $newImage = $(Mustache.render(
-				this.currentImageTemplate.template,
-				this.images[imageIndex]
-			));
-			currentImage.replaceWith($newImage[0]);
-			var $newCurrentImage = $galleryDiv.find(this.selectors.currentImage);
+		clearTimeout(this.currentImageReplacementTimeouts[$galleryDiv.selector]);
+		this.currentImageReplacementTimeouts[$galleryDiv.selector] = setTimeout(function(){
+			this.log('replacing current image with image of index '+imageIndex);
+			var currentImage = $galleryDiv.find(this.selectors.currentImage);
 			setTimeout(function(){
-				imageFrame.removeClass('exchanging');
-			}, 100);
-		}.bind(this), 500);
+				var $newImage = $(Mustache.render(
+					this.currentImageTemplate.template,
+					this.images[imageIndex]
+				));
+				currentImage.replaceWith($newImage[0]);
+				var $newCurrentImage = $galleryDiv.find(this.selectors.currentImage);
+				setTimeout(function(){
+					imageFrame.removeClass('exchanging');
+				}, 100);
+			}.bind(this), 500);
+		}.bind(this), 250);
 	}
 
 	sen.gallery.prototype.setCurrentImageDescription = function(description, $galleryDiv) {
