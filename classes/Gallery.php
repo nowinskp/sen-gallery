@@ -21,12 +21,10 @@ class Gallery {
 	protected $images = [];
 
 	// an array of gallery setup options.
-	// supported options w/ their defaults:
-	// [
-	// 	'showThumbs' => true  -- display images thumbnail list
-	// 	'showDirectLinks' => true  -- allow display of direct image links
-	// ]
-	protected $options;
+	protected $options = [
+		'showThumbs'      => true, // display images thumbnail list
+		'showDirectLinks' => true  // allow direct image links
+	];
 
 	protected $id;
 	protected $imageCount;
@@ -39,7 +37,9 @@ class Gallery {
 	public function __construct($imagesArray, $options = []) {
 		$this->id = self::$instance;
 		self::$instance++;
-		$this->options = $options;
+		foreach ($options as $option => $value) {
+			$this->options[$option] = $value;
+		}
 		$this->loadImageArray($imagesArray);
 		$this->m = new \Mustache_Engine([
 			'loader' => new \Mustache_Loader_FilesystemLoader(__DIR__ .'/../templates/'),
