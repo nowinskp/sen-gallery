@@ -44,15 +44,18 @@ if ($config->getSetting(['WPLoader' => 'setupDefaultWPGalleryCodeFilter']) === t
 	add_filter( 'post_gallery', 'sen_galleries_getWPGalleryCode', 10, 2 );
 }
 function sen_galleries_getWPGalleryCode( $output, $attr ) {
-	$WPGalleryOutput = new sen\galleries\WPGalleryOutput();
-	$galleryDataArray = $WPGalleryOutput->getOutput($output, $attr);
-
-	if ($galleryDataArray) {
-	$gallery = new sen\galleries\Gallery(
-			$galleryDataArray['images'],
-			$galleryDataArray['options']
-		);
-		return $gallery->renderGallery();
+	if (!is_feed()) {
+		$WPGalleryOutput = new sen\galleries\WPGalleryOutput();
+		$galleryDataArray = $WPGalleryOutput->getOutput($output, $attr);
+		if ($galleryDataArray) {
+			$gallery = new sen\galleries\Gallery(
+				$galleryDataArray['images'],
+				$galleryDataArray['options']
+			);
+			return $gallery->renderGallery();
+		}
+	} else {
+		return $output;
 	}
 }
 
