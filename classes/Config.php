@@ -49,8 +49,10 @@ final class Config {
 	function mergeSettings($settingsArray, $createNewKeys = true) {
 		foreach ($settingsArray as $key => $value) {
 			if (is_array($value)) {
-				if (isset(self::$settings[$key][array_keys($value)[0]]) || $createNewKeys === true) {
-					self::$settings[$key][array_keys($value)[0]] = array_values($value)[0];
+				foreach ($value as $subkey => $subvalue) {
+					if (isset(self::$settings[$key][$subkey]) || $createNewKeys === true) {
+						self::$settings[$key][$subkey] = $subvalue;
+					}
 				}
 			} else {
 				if (isset(self::$settings[$key]) || $createNewKeys === true) {
