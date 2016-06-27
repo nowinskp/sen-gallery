@@ -2,7 +2,9 @@
 Media gallery plugin for naEKRANIE.pl
 
 
-This responsive media gallery was created by me during my work at Senfino, for **Hatak Media** company which currently holds the rights to this code and was kind to let me publish it as open source. sen-gallery was developed for **naEKRANIE.pl** - one of the biggest portals about movies, TV series, games and comic books in Poland.
+This responsive media gallery was created by me during my work at Senfino, for **Hatak Media** company which currently holds the rights to this code and was kind to let me publish it here, on GitHub. 
+
+sen-gallery was developed for **naEKRANIE.pl** - one of the biggest portals about movies, TV series, games and comic books in Poland.
 
 --
 
