@@ -1,0 +1,21 @@
+{{# current-image }}
+<div class="sen-gal-current-image-frame SGE_currentImageFrame">
+	<div class="sen-gal-current-image-buttons">
+		{{# link.prev }}
+			<a class="sen-gal-btn sen-gal-image-link-prev SGE_btnPrevImage"
+				href="{{ link.prev }}">{{ labels.prevImage }}</a>
+		{{/ link.prev }}
+		{{# gallery.show-direct-links }}
+			{{# link.direct }}
+				<a	class="sen-gal-btn sen-gal-image-link-direct SGE_btnDirectLink"
+					href="{{ link.direct }}" target="_blank">{{ labels.displayImage }}</a>
+			{{/ link.direct }}
+		{{/ gallery.show-direct-links }}
+		{{# link.next }}
+			<a class="sen-gal-btn sen-gal-image-link-next SGE_btnNextImage"
+				href="{{ link.next }}">{{ labels.nextImage }}</a>
+		{{/ link.next }}
+	</div>
+	{{> partials/current-image }}
+</div>
+{{/ current-image }}

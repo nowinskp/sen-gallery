@@ -1,0 +1,13 @@
+<div
+	id="sen-gallery-{{ gallery.id }}-inline"
+	class="sen-gallery sen-gallery-inline {{ gallery.js }}"
+	data-gallery-id="{{ gallery.id }}"
+	data-gallery-options="{{{ gallery.options }}}">
+	{{{ custom.beforeGalleryContent }}}
+	{{> partials/images-json-div }}
+	{{> partials/header }}
+	{{> partials/current-image-frame }}
+	{{> partials/description }}
+	{{> partials/thumbnail-strip }}
+	{{{ custom.afterGalleryContent }}}
+</div>

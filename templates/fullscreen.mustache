@@ -1,0 +1,37 @@
+<div
+	id="sen-gallery-{{ gallery.id }}-fullscreen"
+	class="sen-gallery sen-gallery-fullscreen js"
+	data-gallery-id="{{ gallery.id }}"
+	data-gallery-options="{{{ gallery.options }}}" style="display: none;">
+	{{! TOP BAR }}
+	<div class="sen-gal-fullscreen-topbar">
+		{{{ custom.topbarLogo }}}
+		<span class="sen-gal-fullscreen-btn-close-fullscreen SGE_btnCloseFullscreen">{{ labels.closeFullscreen }}</span>
+	</div>
+	<div class="sen-gal-fullscreen-content-frame">
+		<span class="sen-gal-fullscreen-btn-toggle-sidebar SGE_btnToggleSidebar"></span>
+		{{! MAIN CONTENT }}
+		<div class="sen-gal-fullscreen-main-content">
+			{{> partials/current-image-frame }}
+			{{> partials/thumbnail-strip }}
+		</div>
+		{{! SIDEBAR }}
+		<div class="sen-gal-fullscreen-sidebar">
+			<div class="sen-gal-image-meta">
+				<header class="sen-gal-header">
+					{{{ custom.headerMenu }}}
+					<div class="sen-gal-counter">
+						<span class="SGE_currentImageNumber">{{ gallery.current-image-number }}</span>/<span class="SGE_totalImageCount">{{ gallery.total-image-count }}</span>
+					</div>
+					<h1 class="sen-gal-current-image-title SGE_currentImageTitle">
+						<span>{{ current-image.title }}</span>
+					</h1>
+				</header>
+				{{> partials/description }}
+			</div>
+			<div class="sen-gal-sidebar-custom-content">
+				{{{ custom.afterSidebarContent }}}
+			</div>
+		</div>
+	</div>
+</div>

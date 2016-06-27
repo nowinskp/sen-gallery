@@ -1,0 +1,68 @@
+.sen-gallery {
+	font-family: $text-font-family;
+	a {
+		color: #fff;
+		text-decoration: none;
+	}
+	.sen-gal-header {
+		background: #111;
+		border-bottom: rem-calc(1) solid #333;
+		color: #fff;
+		.sen-gal-current-image-title {
+			font-family: $header-font-family;
+			color: #fff;
+		}
+		.sen-gal-counter {
+			color: #999;
+		}
+	}
+
+	.sen-gal-image {
+		width: 100%;
+		padding-bottom: 75%;
+		background-position: center center;
+		@include background-size(contain);
+		background-repeat: no-repeat;
+		@include transition(all, 250ms);
+		&.thumbnail {
+			@include background-size(cover);
+			border: rem-calc(4) solid #333;
+			&.active {
+				border-color: $color-accent;
+			}
+			&:hover:not(.active) {
+				border-color: #fff;
+			}
+		}
+	}
+
+	.sen-gal-share-buttons {
+		display: inline-block;
+		margin: rem-calc(9);
+	}
+
+	.sen-gal-btn-fullscreen {
+		display: inline-block;
+		width: rem-calc(24);
+		height: rem-calc(24);
+		background-image: url('../img/icon-fullscreen.png');
+		background-repeat: no-repeat;
+		background-position: center center;
+		text-indent: rem-calc(-99999);
+		margin: rem-calc(9);
+	}
+
+	// FULLSCREEN ELEMENTS
+	.sen-gal-fullscreen-btn-close-fullscreen {
+		display: inline-block;
+		background-image: url('../img/icon-close.png');
+		background-repeat: no-repeat;
+		background-position: right center;
+		@include background-size(contain);
+		padding-right: rem-calc(32);
+		color: #999;
+		&:hover {
+			cursor: pointer;
+		}
+	}
+}

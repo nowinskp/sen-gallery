@@ -1,0 +1,83 @@
+// TABLETS - PORTRAIT
+// **********************************************
+@media #{$medium-up} {
+	.sen-gallery {
+		.sen-gal-current-image-frame {
+			.sen-gal-current-image-buttons {
+				.sen-gal-image-link-next,
+				.sen-gal-image-link-prev {
+					width: rem-calc(64);
+					@include opacity(.75);
+				}
+			}
+		}
+		&.js {
+			// THUMBNAIL STRIP
+			.sen-gal-thumbnails {
+				.sen-gal-move-strip-left,
+				.sen-gal-move-strip-right {
+					background-color: rgba(0, 0, 0, .66);
+					@include opacity(.75);
+				}
+			}
+			// FULLSCREEN TEMPLATE
+			&.sen-gallery-fullscreen {
+				.sen-gal-fullscreen-topbar {
+					height: rem-calc(60);
+					.sen-gal-fullscreen-btn-close-fullscreen {
+						top: rem-calc(20);
+						right: rem-calc(20);
+					}
+				}
+				.sen-gal-fullscreen-content-frame {
+					.sen-gal-fullscreen-main-content {
+						.sen-gal-current-image-frame{
+							.sen-gal-image {
+							}
+						}
+						.sen-gal-thumbnails {
+							display: block;
+							position: absolute;
+							bottom: 0;
+							left: 0;
+							width: 100%;
+						}
+					}
+					.sen-gal-fullscreen-sidebar {
+						.sen-gal-image-meta {
+							padding: rem-calc(20);
+							.sen-gal-header {
+								background: none;
+								border: none;
+								margin-bottom: rem-calc(24);
+							}
+							.sen-gal-current-image-description {
+								background: none;
+								span {
+									padding: 0;
+								}
+							}
+						}
+						.sen-gal-sidebar-custom-content {
+							
+						}
+					}
+				}
+			}
+		}
+	}
+}
+@media #{$medium-only} {
+	.sen-gallery.js {
+		&.sen-gallery-fullscreen {
+			.sen-gal-fullscreen-content-frame {
+				.sen-gal-fullscreen-main-content {
+				}
+				.sen-gal-fullscreen-sidebar {
+					height: rem-calc(200);
+					background: #000;
+				}
+			}
+		}
+	}
+}

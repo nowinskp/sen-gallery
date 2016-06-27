@@ -1,0 +1,11 @@
+{{# gallery.show-thumbs }}
+<div class="sen-gal-thumbnails SGE_thumbnailStripContainer">
+	<span class="sen-gal-btn sen-gal-move-strip-left SGE_btnMoveStripLeft"></span>
+	<span class="sen-gal-btn sen-gal-move-strip-right SGE_btnMoveStripRight"></span>
+	<div class="sen-gal-thumbnails-strip SGE_thumbnailStrip">
+	{{# images }}
+		<a href="{{ link.gallery }}">{{> partials/image-thumbnail }}</a>
+	{{/ images }}
+	</div>
+</div>
+{{/ gallery.show-thumbs }}

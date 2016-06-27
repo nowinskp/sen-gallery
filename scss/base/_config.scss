@@ -1,0 +1,29 @@
+// box model
+// **********************
+.sen-gallery,
+.sen-gallery * {
+	@include box-sizing(border-box);
+}
+
+
+// units
+// **********************
+$rem-base: 16px;
+
+
+// media queries
+// **********************
+$small-range:   (     0em, 47.937em ); /*      0,  767px <- smartphones         */
+$medium-range:  (    48em, 61.187em ); /*  768px,  979px <- tablets - portrait  */
+$large-range:   ( 61.25em, 89.937em ); /*  980px, 1439px <- tablets - landscape */
+$xlarge-range:  (    90em           ); /* 1440px         <- desktop & notebooks */
+
+
+// fonts
+// **********************
+$header-font-family: Roboto Slab, Arial, Helvetica, sans-serif;
+$text-font-family: Roboto Slab, Arial, Helvetica, sans-serif;
+
+// colors
+// **********************
+$color-accent: #00c0eb;
